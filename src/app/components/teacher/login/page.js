@@ -5,7 +5,7 @@ import { FaArrowRight, FaUniversity, FaEye, FaEyeSlash } from "react-icons/fa";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-const Login = () => {
+const TeacherLogin = () => {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -17,7 +17,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:5000/api/student/login", {
+      const res = await fetch("http://localhost:5000/api/teacher/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone, password }),
@@ -30,11 +30,11 @@ const Login = () => {
         return;
       }
 
-      // ✅ Save student data in localStorage
-      localStorage.setItem("studentData", JSON.stringify(data.student));
+      // ✅ Save teacher data in localStorage
+      localStorage.setItem("teacherData", JSON.stringify(data.teacher));
 
-      // ✅ Redirect to profile page
-      router.push("/components/profile/student");
+      // ✅ Redirect to teacher profile page
+      router.push("/components/profile/teacher");
     } catch (err) {
       console.error("Login Error:", err);
       alert("Something went wrong. Please try again later.");
@@ -44,7 +44,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-900 via-purple-800 to-indigo-900 text-white relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-green-800 via-teal-700 to-blue-700 text-white relative overflow-hidden">
       {/* Animated background circles */}
       <motion.div
         className="absolute w-96 h-96 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"
@@ -69,10 +69,10 @@ const Login = () => {
         <div className="flex flex-col items-center mb-6">
           <FaUniversity className="text-5xl text-yellow-400 mb-3" />
           <h1 className="text-2xl font-semibold text-center text-white">
-            Victoria University Login
+            Victoria University Teacher Login
           </h1>
           <p className="text-sm text-gray-300 mt-2">
-            Please enter your credentials to continue
+            Please enter your credentials to access your portal
           </p>
         </div>
 
@@ -121,7 +121,7 @@ const Login = () => {
           >
             <p>Don’t have an account?</p>
             <Link
-              href="/components/signup"
+              href="/components/teacher/signup"
               className="inline-flex items-center gap-1 text-yellow-400 font-medium hover:text-yellow-300 transition-colors duration-300"
             >
               <span>Sign up</span>
@@ -129,7 +129,8 @@ const Login = () => {
             </Link>
           </motion.div>
 
-          {/* Teachers login Redirect */}
+
+           {/* Student login Redirect */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -137,10 +138,10 @@ const Login = () => {
             className="flex items-center justify-center gap-2 text-gray-200 text-sm"
           >
             <Link
-              href="/components/teacher/login"
+              href="/components/login"
               className="inline-flex items-center gap-1 text-yellow-400 font-medium hover:text-yellow-300 transition-colors duration-300"
             >
-              <span>Teacher Login</span>
+              <span>Student Login</span>
               <FaArrowRight className="text-xs mt-px" />
             </Link>
           </motion.div>
@@ -169,4 +170,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default TeacherLogin;

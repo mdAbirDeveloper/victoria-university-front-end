@@ -1,0 +1,286 @@
+"use client";
+import React, { useEffect, useState } from "react";
+import { departments, sessions } from "../../../../data"; // ✅ Shared data
+import TeacherNavbar from "../navber/teacher/page";
+import { motion } from "framer-motion";
+
+const AllStudent = () => {
+  const [teacherInfo, setTeacherInfo] = useState(null);
+  const [department, setDepartment] = useState("");
+  const [session, setSession] = useState("");
+  const [students, setStudents] = useState([]);
+  const [approved, setApproved] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [searchRoll, setSearchRoll] = useState("");
+
+  // ✅ Check teacher login
+  useEffect(() => {
+    const data = localStorage.getItem("teacherData");
+    if (!data) {
+      alert("Access denied! Only teachers can view this page.");
+      window.location.href = "/";
+    } else {
+      setTeacherInfo(JSON.parse(data));
+    }
+  }, []);
+
+  // ✅ Fetch students
+  const fetchStudents = async () => {
+    if (!department || !session) {
+      alert("Please select department and session");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `http://localhost:5000/api/students?department=${department}&session=${session}`
+      );
+      const data = await res.json();
+      if (res.ok) {
+        const approvedStudents = data.filter((s) => s.approved);
+        const pendingStudents = data.filter((s) => !s.approved);
+        setApproved(approvedStudents);
+        setStudents(pendingStudents);
+      } else {
+        alert(data.message || "Failed to fetch students");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Server error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleApprove = async (id) => {
+    try {
+      const res = await fetch(
+        `http://localhost:5000/api/student/approve/${id}`,
+        { method: "PUT" }
+      );
+      const data = await res.json();
+      if (res.ok) {
+        setStudents((prev) => prev.filter((s) => s._id !== id));
+        setApproved((prev) => [...prev, data.student]);
+      } else alert(data.message);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleUnapprove = async (id) => {
+    try {
+      const res = await fetch(
+        `http://localhost:5000/api/student/unapprove/${id}`,
+        { method: "PUT" }
+      );
+      const data = await res.json();
+      if (res.ok) {
+        setApproved((prev) => prev.filter((s) => s._id !== id));
+        setStudents((prev) => [...prev, data.student]);
+      } else alert(data.message);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this student?")) return;
+
+    try {
+      const res = await fetch(
+        `http://localhost:5000/api/student/delete/${id}`,
+        { method: "DELETE" }
+      );
+      const data = await res.json();
+      if (res.ok) {
+        setApproved((prev) => prev.filter((s) => s._id !== id));
+        setStudents((prev) => prev.filter((s) => s._id !== id));
+      } else alert(data.message);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // ✅ Filter function — match last 3 digits of roll number
+  const filterByRoll = (list) => {
+    if (!searchRoll.trim()) return list;
+    return list.filter((student) =>
+      student.roll.slice(-3).includes(searchRoll.trim())
+    );
+  };
+
+  const filteredPending = filterByRoll(students);
+  const filteredApproved = filterByRoll(approved);
+
+  return (
+    <div className="min-h-screen bg-linear-to-br from-green-800 via-teal-700 to-blue-700 text-white">
+      <TeacherNavbar />
+
+      <div className="p-5 max-w-7xl mx-auto">
+        <h1 className="text-3xl font-bold mb-6 text-center">All Students</h1>
+
+        {/* Department & Session Selection */}
+        <div className="bg-white/10 backdrop-blur-md p-6 rounded-2xl shadow-lg max-w-[680px] mx-auto mb-8">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-3">
+            <select
+              value={department}
+              onChange={(e) => setDepartment(e.target.value)}
+              className="p-3 rounded-lg bg-linear-to-br from-green-800 via-teal-700 text-white placeholder-green-600 w-full md:w-auto focus:outline-none focus:ring-2 focus:ring-yellow-400"
+            >
+              <option value="">Select Department</option>
+              {departments.map((dept, index) => (
+                <option key={index} value={dept} className="bg-teal-600">
+                  {dept}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={session}
+              onChange={(e) => setSession(e.target.value)}
+              className="p-3 rounded-lg bg-linear-to-br from-green-800 via-teal-700 text-white placeholder-green-600 w-full md:w-auto focus:outline-none focus:ring-2 focus:ring-yellow-400"
+            >
+              <option value="">Select Session</option>
+              {sessions.map((sess, index) => (
+                <option key={index} value={sess} className="bg-teal-600">
+                  {sess}
+                </option>
+              ))}
+            </select>
+
+            <button
+              onClick={fetchStudents}
+              disabled={loading}
+              className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 px-5 py-3 rounded-lg transition-all disabled:opacity-60 w-full md:w-auto"
+            >
+              {loading ? "Loading..." : "Fetch Students"}
+            </button>
+          </div>
+        </div>
+
+        {/* 🔍 Search Filter */}
+        {(students.length > 0 || approved.length > 0) && (
+          <div className="text-center mb-6">
+            <input
+              type="text"
+              placeholder="Search by last 3 digits of roll..."
+              value={searchRoll}
+              onChange={(e) => setSearchRoll(e.target.value)}
+              className="p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 w-full md:w-1/2"
+            />
+          </div>
+        )}
+
+        {/* Pending Students */}
+        {filteredPending.length > 0 && (
+          <div className="bg-white/10 backdrop-blur-md p-5 rounded-2xl shadow-lg mb-8 overflow-x-auto">
+            <h2 className="text-xl font-semibold mb-4">Pending Students</h2>
+            <table className="w-full min-w-[600px] text-white border-separate border-spacing-0">
+              <thead className="bg-white/20">
+                <tr>
+                  <th className="p-3 text-left">Name</th>
+                  <th className="p-3 text-left">Roll</th>
+                  <th className="p-3 text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredPending.map((student) => (
+                  <tr
+                    key={student._id}
+                    className="odd:bg-white/5 even:bg-white/10"
+                  >
+                    <td className="p-3">{student.name}</td>
+                    <td className="p-3">{student.roll}</td>
+                    <td className="p-3 text-center">
+                      <button
+                        onClick={() => handleApprove(student._id)}
+                        className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg transition"
+                      >
+                        Approve
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Approved Students */}
+        {filteredApproved.length > 0 && (
+          <div className="bg-white/10 backdrop-blur-md p-5 rounded-2xl shadow-lg overflow-x-auto">
+            <h2 className="text-xl font-semibold mb-4">Approved Students</h2>
+            <table className="w-full min-w-[600px] text-white border-separate border-spacing-0">
+              <thead className="bg-white/20">
+                <tr>
+                  <th className="p-3 text-left">Name</th>
+                  <th className="p-3 text-left">Roll</th>
+                  <th className="p-3 text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredApproved.map((student) => (
+                  <tr
+                    key={student._id}
+                    className="odd:bg-white/5 even:bg-white/10"
+                  >
+                    <td className="p-3">{student.name}</td>
+                    <td className="p-3">{student.roll}</td>
+                    <td className="p-3 text-center space-x-2">
+                      <button
+                        onClick={() => handleUnapprove(student._id)}
+                        className="bg-yellow-500 hover:bg-yellow-600 px-3 py-1 rounded-lg transition"
+                      >
+                        Unapprove
+                      </button>
+                      <button
+                        onClick={() => handleDelete(student._id)}
+                        className="bg-red-500 hover:bg-red-600 px-3 py-1 rounded-lg transition"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* 🧩 No Data Found */}
+        {!loading &&
+          students.length === 0 &&
+          approved.length === 0 &&
+          department &&
+          session && (
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="bg-white/10 backdrop-blur-md text-center text-white p-10 rounded-2xl shadow-2xl mt-10 border border-white/20"
+            >
+              <h2 className="text-3xl font-semibold mb-3 text-yellow-400">
+                No Students Found 😢
+              </h2>
+              <p className="text-gray-200 max-w-md mx-auto">
+                We couldn’t find any students for the selected{" "}
+                <span className="font-medium text-yellow-300">
+                  {department}
+                </span>{" "}
+                department and{" "}
+                <span className="font-medium text-yellow-300">{session}</span>{" "}
+                session.
+              </p>
+              <p className="text-gray-400 text-sm mt-3">
+                Please double-check your selection or try again later.
+              </p>
+            </motion.div>
+          )}
+      </div>
+    </div>
+  );
+};
+
+export default AllStudent;

@@ -37,16 +37,49 @@ const Signup = () => {
     setErrors({ ...errors, [e.target.name]: "" });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSubmitted(true);
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    // Simulate loading for demonstration
-    setLoading(true);
-    setTimeout(() => setLoading(false), 1000);
+  setLoading(true);
 
-    // Actual API logic can be added here
-  };
+  try {
+    const res = await fetch("http://localhost:5000/api/student/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+
+    if (res.ok) {
+      // If success, show success overlay
+      setSubmitted(true);
+      // setFormData({
+      //   name: "",
+      //   email: "",
+      //   phone: "",
+      //   fatherName: "",
+      //   motherName: "",
+      //   fatherPhone: "",
+      //   motherPhone: "",
+      //   session: "",
+      //   department: "",
+      //   roll: "",
+      //   address: "",
+      //   password: "",
+      // });
+    } else {
+      const errorData = await res.json();
+      alert(errorData.message || "Failed to register. Please try again.");
+    }
+  } catch (error) {
+    console.error("Signup error:", error);
+    alert("Something went wrong. Please try again later.");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-900 via-purple-800 to-indigo-900 text-white relative overflow-hidden">
@@ -131,7 +164,7 @@ const Signup = () => {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-3 text-gray-300 hover:text-yellow-400"
+              className="absolute right-3 mt-4 text-gray-300 hover:text-yellow-400"
             >
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
@@ -182,8 +215,21 @@ const Signup = () => {
             </Link>
           </motion.div>
 
+          {/* Teachers signup link link */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="mt-2 flex items-center justify-center gap-2 text-gray-200 text-sm md:col-span-2"
+          >
+            <Link href="/components/teacher/signup" className="inline-flex items-center gap-1 text-yellow-400 font-medium hover:text-yellow-300 transition-colors duration-300">
+              <span>Teacher Signup</span>
+              <FaArrowRight className="text-xs mt-px" />
+            </Link>
+          </motion.div>
+
           {/* Submit Button */}
-          <div className="md:col-span-2 mt-4">
+          <div className="md:col-span-2">
             <motion.button
               type="submit"
               whileHover={{ scale: 1.03 }}
