@@ -43,7 +43,7 @@ const handleSubmit = async (e) => {
   setLoading(true);
 
   try {
-    const res = await fetch("http://localhost:5000/api/student/signup", {
+    const res = await fetch("https://victoria-university-back-end.vercel.app/api/student/signup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

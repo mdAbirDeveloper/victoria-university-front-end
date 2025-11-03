@@ -64,7 +64,7 @@ const TeacherProfileComponent = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/teacher/update", {
+      const res = await fetch("https://victoria-university-back-end.vercel.app/api/teacher/update", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

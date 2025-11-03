@@ -14,7 +14,7 @@ const StudentNavbar = () => {
   };
 
   return (
-    <nav className="bg-white/10 backdrop-blur-md p-4 flex justify-between items-center border-b border-white/20 relative z-50">
+    <nav className="backdrop-blur-md text-white p-4 flex justify-between items-center border-b border-white/20 relative z-50">
       {/* Logo */}
       <div className="flex items-center gap-2 text-yellow-400 text-xl font-bold">
         <FaUserGraduate /> Victoria University
@@ -30,7 +30,7 @@ const StudentNavbar = () => {
         </button>
         <button
           className="hover:text-yellow-400 transition"
-          onClick={() => router.push("/components/attendance")}
+          onClick={() => router.push("/components/attendence")}
         >
           Attendance
         </button>

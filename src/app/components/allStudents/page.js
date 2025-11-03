@@ -1,8 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { departments, sessions } from "../../../../data"; // ✅ Shared data
+import { departments, sessions } from "../../../../data";
 import TeacherNavbar from "../navber/teacher/page";
 import { motion } from "framer-motion";
+
+const BATCH_SIZE = 500;
 
 const AllStudent = () => {
   const [teacherInfo, setTeacherInfo] = useState(null);
@@ -12,6 +14,8 @@ const AllStudent = () => {
   const [approved, setApproved] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchRoll, setSearchRoll] = useState("");
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
 
   // ✅ Check teacher login
   useEffect(() => {
@@ -24,8 +28,8 @@ const AllStudent = () => {
     }
   }, []);
 
-  // ✅ Fetch students
-  const fetchStudents = async () => {
+  // ✅ Fetch students batch-wise
+  const fetchStudents = async (newPage = 1) => {
     if (!department || !session) {
       alert("Please select department and session");
       return;
@@ -34,14 +38,25 @@ const AllStudent = () => {
     setLoading(true);
     try {
       const res = await fetch(
-        `http://localhost:5000/api/students?department=${department}&session=${session}`
+        `https://victoria-university-back-end.vercel.app/api/students?department=${department}&session=${session}&page=${newPage}&limit=${BATCH_SIZE}`
       );
       const data = await res.json();
+
       if (res.ok) {
-        const approvedStudents = data.filter((s) => s.approved);
-        const pendingStudents = data.filter((s) => !s.approved);
-        setApproved(approvedStudents);
-        setStudents(pendingStudents);
+        // Separate approved & pending
+        const approvedStudents = data.students.filter((s) => s.approved);
+        const pendingStudents = data.students.filter((s) => !s.approved);
+
+        if (newPage === 1) {
+          setApproved(approvedStudents);
+          setStudents(pendingStudents);
+        } else {
+          setApproved((prev) => [...prev, ...approvedStudents]);
+          setStudents((prev) => [...prev, ...pendingStudents]);
+        }
+
+        setTotal(data.total);
+        setPage(newPage);
       } else {
         alert(data.message || "Failed to fetch students");
       }
@@ -53,12 +68,21 @@ const AllStudent = () => {
     }
   };
 
+  // Load more batch
+  const handleLoadMore = () => {
+    const nextPage = page + 1;
+    const maxPage = Math.ceil(total / BATCH_SIZE);
+    if (nextPage <= maxPage) {
+      fetchStudents(nextPage);
+    }
+  };
+
+  // ✅ Approve a student
   const handleApprove = async (id) => {
     try {
-      const res = await fetch(
-        `http://localhost:5000/api/student/approve/${id}`,
-        { method: "PUT" }
-      );
+      const res = await fetch(`https://victoria-university-back-end.vercel.app/api/student/approve/${id}`, {
+        method: "PUT",
+      });
       const data = await res.json();
       if (res.ok) {
         setStudents((prev) => prev.filter((s) => s._id !== id));
@@ -69,10 +93,11 @@ const AllStudent = () => {
     }
   };
 
+  // ✅ Unapprove a student
   const handleUnapprove = async (id) => {
     try {
       const res = await fetch(
-        `http://localhost:5000/api/student/unapprove/${id}`,
+        `https://victoria-university-back-end.vercel.app/api/student/unapprove/${id}`,
         { method: "PUT" }
       );
       const data = await res.json();
@@ -85,14 +110,14 @@ const AllStudent = () => {
     }
   };
 
+  // ✅ Delete a student
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this student?")) return;
 
     try {
-      const res = await fetch(
-        `http://localhost:5000/api/student/delete/${id}`,
-        { method: "DELETE" }
-      );
+      const res = await fetch(`https://victoria-university-back-end.vercel.app/api/student/delete/${id}`, {
+        method: "DELETE",
+      });
       const data = await res.json();
       if (res.ok) {
         setApproved((prev) => prev.filter((s) => s._id !== id));
@@ -103,7 +128,7 @@ const AllStudent = () => {
     }
   };
 
-  // ✅ Filter function — match last 3 digits of roll number
+  // ✅ Filter by last 3 digits of roll
   const filterByRoll = (list) => {
     if (!searchRoll.trim()) return list;
     return list.filter((student) =>
@@ -151,7 +176,7 @@ const AllStudent = () => {
             </select>
 
             <button
-              onClick={fetchStudents}
+              onClick={() => fetchStudents(1)}
               disabled={loading}
               className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 px-5 py-3 rounded-lg transition-all disabled:opacity-60 w-full md:w-auto"
             >
@@ -200,11 +225,28 @@ const AllStudent = () => {
                       >
                         Approve
                       </button>
+                      <button
+                        onClick={() => handleDelete(student._id)}
+                        className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg ml-2 transition"
+                      >
+                        Delete
+                      </button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+            {/* Load More Button */}
+            {students.length + approved.length < total && (
+              <div className="text-center mt-4">
+                <button
+                  onClick={handleLoadMore}
+                  className="bg-blue-500 hover:bg-blue-600 px-6 py-2 rounded-lg transition"
+                >
+                  {loading ? "Loading..." : "Load More"}
+                </button>
+              </div>
+            )}
           </div>
         )}
 
@@ -266,9 +308,7 @@ const AllStudent = () => {
               </h2>
               <p className="text-gray-200 max-w-md mx-auto">
                 We couldn’t find any students for the selected{" "}
-                <span className="font-medium text-yellow-300">
-                  {department}
-                </span>{" "}
+                <span className="font-medium text-yellow-300">{department}</span>{" "}
                 department and{" "}
                 <span className="font-medium text-yellow-300">{session}</span>{" "}
                 session.

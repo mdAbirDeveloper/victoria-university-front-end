@@ -26,3 +26,11 @@ export const sessions = [
   "2024-2025",
   "2025-2026",
 ];
+
+
+export const subjects = [
+  "Mathematics",
+  "Physics",
+  "Programming",
+  "Economics",
+];

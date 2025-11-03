@@ -14,14 +14,14 @@ const TeacherNavbar = () => {
   };
 
   return (
-    <nav className="backdrop-blur-md p-4 flex justify-between items-center relative z-50 text-white">
+    <nav className="backdrop-blur-md p-4 flex justify-between items-center border-b border-white/20 relative z-50">
       {/* Logo */}
       <div className="flex items-center gap-2 text-yellow-400 text-xl font-bold">
         <FaChalkboardTeacher /> University Portal
       </div>
 
       {/* Desktop Menu */}
-      <div className="hidden md:flex gap-5 text-sm sm:text-base">
+      <div className="hidden text-white font-bold md:flex gap-5 text-sm sm:text-base">
         <button
           className="hover:text-yellow-400 transition"
           onClick={() => router.push("/components/token/ganerateToken")}
@@ -76,7 +76,7 @@ const TeacherNavbar = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
-            className="absolute top-full left-0 w-full bg-linear-to-br from-green-800 via-teal-700 to-blue-700  backdrop-blur-md border-t border-white/20 flex flex-col items-center md:hidden"
+            className="absolute text-white font-bold top-full left-0 w-full bg-linear-to-br from-green-800 via-teal-700 to-blue-700  backdrop-blur-md border-t border-white/20 flex flex-col items-center md:hidden"
           >
             <button
               className="py-3 hover:text-yellow-400 transition w-full text-center"

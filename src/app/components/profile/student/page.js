@@ -33,7 +33,7 @@ const StudentProfile = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/student/update", {
+      const res = await fetch("https://victoria-university-back-end.vercel.app/api/student/update", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
