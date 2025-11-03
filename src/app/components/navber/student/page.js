@@ -78,7 +78,7 @@ const StudentNavbar = () => {
             <button
               className="py-3 hover:text-yellow-400 transition w-full text-center"
               onClick={() => {
-                router.push("/components/attendance");
+                router.push("/components/attendence");
                 setMenuOpen(false);
               }}
             >
