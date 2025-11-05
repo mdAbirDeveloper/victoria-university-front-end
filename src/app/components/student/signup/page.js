@@ -209,7 +209,7 @@ const handleSubmit = async (e) => {
             className="mt-8 flex items-center justify-center gap-2 text-gray-200 text-sm md:col-span-2"
           >
             <p>Already have an account?</p>
-            <Link href="/components/login" className="inline-flex items-center gap-1 text-yellow-400 font-medium hover:text-yellow-300 transition-colors duration-300">
+            <Link href="/components/student/login" className="inline-flex items-center gap-1 text-yellow-400 font-medium hover:text-yellow-300 transition-colors duration-300">
               <span>Login</span>
               <FaArrowRight className="text-xs mt-px" />
             </Link>

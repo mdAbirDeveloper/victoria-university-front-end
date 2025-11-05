@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FaUserGraduate, FaEdit, FaEye, FaEyeSlash } from "react-icons/fa";
-import StudentNavbar from "../../navber/student/page";
+import StudentNavbar from "../navber/page";
 
 const StudentProfile = () => {
   const [student, setStudent] = useState(null);

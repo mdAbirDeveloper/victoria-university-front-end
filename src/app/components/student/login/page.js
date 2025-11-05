@@ -34,7 +34,7 @@ const Login = () => {
       localStorage.setItem("studentData", JSON.stringify(data.student));
 
       // ✅ Redirect to profile page
-      router.push("/components/profile/student");
+      router.push("/components/student/profile");
     } catch (err) {
       console.error("Login Error:", err);
       alert("Something went wrong. Please try again later.");
@@ -121,7 +121,7 @@ const Login = () => {
           >
             <p>Don’t have an account?</p>
             <Link
-              href="/components/signup"
+              href="/components/student/signup"
               className="inline-flex items-center gap-1 text-yellow-400 font-medium hover:text-yellow-300 transition-colors duration-300"
             >
               <span>Sign up</span>

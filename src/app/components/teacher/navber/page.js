@@ -2,41 +2,53 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { FaUserGraduate, FaSignOutAlt, FaBars, FaTimes } from "react-icons/fa";
+import { FaChalkboardTeacher, FaSignOutAlt, FaBars, FaTimes } from "react-icons/fa";
 
-const StudentNavbar = () => {
+const TeacherNavbar = () => {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = () => {
-    localStorage.removeItem("studentData");
-    router.push("/components/login");
+    localStorage.removeItem("teacherData");
+    router.push("/components/teacher/login");
   };
 
   return (
-    <nav className="backdrop-blur-md text-white p-4 flex justify-between items-center border-b border-white/20 relative z-50">
+    <nav className="backdrop-blur-md p-4 flex justify-between items-center border-b border-white/20 relative z-50">
       {/* Logo */}
       <div className="flex items-center gap-2 text-yellow-400 text-xl font-bold">
-        <FaUserGraduate /> Victoria University
+        <FaChalkboardTeacher /> University Portal
       </div>
 
       {/* Desktop Menu */}
-      <div className="hidden md:flex gap-5 text-sm sm:text-base">
+      <div className="hidden text-white font-bold md:flex gap-5 text-sm sm:text-base">
         <button
           className="hover:text-yellow-400 transition"
-          onClick={() => router.push("/components/profile")}
+          onClick={() => router.push("/components/teacher/ganerateToken")}
         >
-          Profile
+          Generate Token
         </button>
         <button
           className="hover:text-yellow-400 transition"
-          onClick={() => router.push("/components/attendence")}
+          onClick={() => router.push("/components/teacher/allStudents")}
         >
-          Attendance
+          All Students
         </button>
         <button
           className="hover:text-yellow-400 transition"
-          onClick={() => alert("More features coming soon!")}
+          onClick={() => router.push("/components/teacher/attendance")}
+        >
+          Take Attendance
+        </button>
+        <button
+          className="hover:text-yellow-400 transition"
+          onClick={() => router.push("/components/teacher/gtp")}
+        >
+          GTP
+        </button>
+        <button
+          className="hover:text-yellow-400 transition"
+          onClick={() => router.push("/components/teacher/results")}
         >
           Results
         </button>
@@ -64,30 +76,48 @@ const StudentNavbar = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
-            className="absolute top-full left-0 w-full bg-linear-to-br from-blue-900 via-purple-800 to-indigo-900 backdrop-blur-md border-t border-white/20 flex flex-col items-center md:hidden"
+            className="absolute text-white font-bold top-full left-0 w-full bg-linear-to-br from-green-800 via-teal-700 to-blue-700  backdrop-blur-md border-t border-white/20 flex flex-col items-center md:hidden"
           >
             <button
               className="py-3 hover:text-yellow-400 transition w-full text-center"
               onClick={() => {
-                router.push("/components/profile");
+                router.push("/components/teacher/ganerateToken");
                 setMenuOpen(false);
               }}
             >
-              Profile
+              Generate Token
             </button>
             <button
               className="py-3 hover:text-yellow-400 transition w-full text-center"
               onClick={() => {
-                router.push("/components/attendence");
+                router.push("/components/teacher/allStudents");
                 setMenuOpen(false);
               }}
             >
-              Attendance
+              All Students
             </button>
             <button
               className="py-3 hover:text-yellow-400 transition w-full text-center"
               onClick={() => {
-                alert("More features coming soon!");
+                router.push("/components/teacher/attendance");
+                setMenuOpen(false);
+              }}
+            >
+              Take Attendance
+            </button>
+            <button
+              className="py-3 hover:text-yellow-400 transition w-full text-center"
+              onClick={() => {
+                router.push("/components/teacher/gtp");
+                setMenuOpen(false);
+              }}
+            >
+              GTP
+            </button>
+            <button
+              className="py-3 hover:text-yellow-400 transition w-full text-center"
+              onClick={() => {
+                router.push("/components/teacher/results");
                 setMenuOpen(false);
               }}
             >
@@ -109,4 +139,4 @@ const StudentNavbar = () => {
   );
 };
 
-export default StudentNavbar;
+export default TeacherNavbar;

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FaChalkboardTeacher, FaEdit, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import TeacherNavbar from "../../navber/teacher/page";
+import TeacherNavbar from "../navber/page";
 
 const TeacherProfileComponent = () => {
   const [teacher, setTeacher] = useState(null);
@@ -52,7 +52,7 @@ const TeacherProfileComponent = () => {
         password: "",
       });
     } else {
-      router.push("/components/login");
+      router.push("/components/teacher/login");
     }
   }, [router]);
 

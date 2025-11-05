@@ -34,7 +34,7 @@ const TeacherLogin = () => {
       localStorage.setItem("teacherData", JSON.stringify(data.teacher));
 
       // ✅ Redirect to teacher profile page
-      router.push("/components/profile/teacher");
+      router.push("/components/teacher/profile");
     } catch (err) {
       console.error("Login Error:", err);
       alert("Something went wrong. Please try again later.");
@@ -138,7 +138,7 @@ const TeacherLogin = () => {
             className="flex items-center justify-center gap-2 text-gray-200 text-sm"
           >
             <Link
-              href="/components/login"
+              href="/components/student/login"
               className="inline-flex items-center gap-1 text-yellow-400 font-medium hover:text-yellow-300 transition-colors duration-300"
             >
               <span>Student Login</span>

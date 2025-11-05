@@ -1,8 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { departments, sessions } from "../../../../data";
-import TeacherNavbar from "../navber/teacher/page";
+import { departments, sessions } from "../../../../../data";
 import { motion } from "framer-motion";
+import TeacherNavbar from "../navber/page";
 
 const BATCH_SIZE = 500;
 

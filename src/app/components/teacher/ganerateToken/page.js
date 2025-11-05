@@ -1,9 +1,8 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { departments, sessions, subjects } from "../../../../../data";
-import TeacherNavbar from "../../navber/teacher/page";
+import TeacherNavbar from "../navber/page";
 
 const TeacherTokenPage = () => {
   const [department, setDepartment] = useState("");
@@ -23,7 +22,7 @@ const TeacherTokenPage = () => {
       setTeacherData(parsed);
     } else {
       alert("You must be logged in as a teacher to access this page!");
-      window.location.href = "/components/login";
+      window.location.href = "/components/teacher/login";
       return;
     }
   }, []);

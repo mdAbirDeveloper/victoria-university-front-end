@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
-import StudentNavbar from "../navber/student/page";
+import StudentNavbar from "../navber/page";
 
 const COLORS = ["#4ade80", "#f87171"]; // green = present, red = absent
 
@@ -102,10 +102,10 @@ const StudentAttendance = () => {
       );
 
       const data = await res.json();
+      console.log(res)
       if (res.ok) {
         setMessage("✅ Attendance recorded successfully!");
-        // ✅ Refetch latest student data after success
-        await refetchStudentData(studentData._id);
+        await refetchStudentData(studentData._id); // refresh latest data
       } else {
         setMessage(`❌ ${data.message}`);
       }
