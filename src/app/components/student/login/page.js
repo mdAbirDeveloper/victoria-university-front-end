@@ -46,7 +46,7 @@ const Login = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-900 via-purple-800 to-indigo-900 text-white relative overflow-hidden">
       {/* Animated background circles */}
-      <motion.div
+      {/* <motion.div
         className="absolute w-96 h-96 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"
         initial={{ x: -200, y: -100 }}
         animate={{ x: 200, y: 200 }}
@@ -57,7 +57,7 @@ const Login = () => {
         initial={{ x: 200, y: 100 }}
         animate={{ x: -200, y: -200 }}
         transition={{ repeat: Infinity, duration: 8, ease: "easeInOut", repeatType: "mirror" }}
-      />
+      /> */}
 
       {/* Login Card */}
       <motion.div
