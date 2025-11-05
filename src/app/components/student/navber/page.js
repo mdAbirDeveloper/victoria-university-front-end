@@ -35,12 +35,6 @@ const StudentNavbar = () => {
           Attendance
         </button>
         <button
-          className="hover:text-yellow-400 transition"
-          onClick={() => alert("More features coming soon!")}
-        >
-          Results
-        </button>
-        <button
           onClick={handleLogout}
           className="text-red-400 hover:text-red-500 flex items-center gap-1"
         >
@@ -83,15 +77,6 @@ const StudentNavbar = () => {
               }}
             >
               Attendance
-            </button>
-            <button
-              className="py-3 hover:text-yellow-400 transition w-full text-center"
-              onClick={() => {
-                alert("More features coming soon!");
-                setMenuOpen(false);
-              }}
-            >
-              Results
             </button>
             <button
               onClick={() => {

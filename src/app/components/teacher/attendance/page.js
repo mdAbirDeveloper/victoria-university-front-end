@@ -186,7 +186,7 @@ const Attendance = () => {
   return (
     <div className="bg-linear-to-br from-green-800 via-teal-700 to-blue-700 min-h-screen text-white">
       <TeacherNavbar />
-      <div className="min-h-screen p-6">
+      <div className="min-h-screen md:p-6">
         <div className="max-w-6xl mx-auto bg-white/10 backdrop-blur-lg p-6 rounded-2xl shadow-2xl animate-fadeIn text-white">
           <h2 className="text-3xl font-bold text-center mb-6 text-white">
             🎓 Attendance Management
@@ -410,7 +410,7 @@ const Attendance = () => {
                           <td className="py-2 px-4 text-center">
                             {isPresent ? (
                               <div className="flex justify-center items-center gap-3">
-                                <span className="text-green-600 font-medium">
+                                <span className="text-white font-medium">
                                   ✅ Present
                                 </span>
                                 <button

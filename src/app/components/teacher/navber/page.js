@@ -40,7 +40,7 @@ const TeacherNavbar = () => {
         >
           Take Attendance
         </button>
-        <button
+        {/* <button
           className="hover:text-yellow-400 transition"
           onClick={() => router.push("/components/teacher/gtp")}
         >
@@ -51,7 +51,7 @@ const TeacherNavbar = () => {
           onClick={() => router.push("/components/teacher/results")}
         >
           Results
-        </button>
+        </button> */}
         <button
           onClick={handleLogout}
           className="text-red-400 hover:text-red-500 flex items-center gap-1"
@@ -105,7 +105,7 @@ const TeacherNavbar = () => {
             >
               Take Attendance
             </button>
-            <button
+            {/* <button
               className="py-3 hover:text-yellow-400 transition w-full text-center"
               onClick={() => {
                 router.push("/components/teacher/gtp");
@@ -122,7 +122,7 @@ const TeacherNavbar = () => {
               }}
             >
               Results
-            </button>
+            </button> */}
             <button
               onClick={() => {
                 handleLogout();
