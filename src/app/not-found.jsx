@@ -36,7 +36,7 @@ const NotFoundPage = () => {
   }, [count]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 text-white overflow-hidden relative p-4">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-linear-to-br from-indigo-600 via-purple-600 to-pink-500 text-white overflow-hidden relative p-4">
       {/* Floating glowing circles for animation */}
       <div className="absolute w-64 h-64 bg-white/10 rounded-full blur-3xl top-16 left-20 animate-float-slow"></div>
       <div className="absolute w-80 h-80 bg-white/10 rounded-full blur-3xl bottom-16 right-20 animate-float-reverse"></div>
