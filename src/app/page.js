@@ -35,7 +35,7 @@ export default function Home() {
       {/* SEO Section */}
       <Head>
         <title>Victoria University Attendance | হাজিরা</title>
-        <meta name="google-site-verification" content="your_verification_code" />
+        <meta name="google-site-verification" content="7dO-1SEFmXZjBNg-3rEe4X-5fDPyQf_dCV45rNlP9PU" />
         <meta
           name="description"
           content="Victoria University Student and Teacher Portal. Check and manage attendance data (Hajira) for students and teachers. / ভিক্টোরিয়া ইউনিভার্সিটি ছাত্র ও শিক্ষক পোর্টাল। ছাত্র ও শিক্ষকদের হাজিরা ডেটা দেখুন ও ম্যানেজ করুন।"
