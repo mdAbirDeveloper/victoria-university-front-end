@@ -17,6 +17,34 @@ const AllStudent = () => {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
 
+  // ✅ Restore previous page state (filter, data, scroll)
+  useEffect(() => {
+    const savedState = localStorage.getItem("teacherPageState");
+    if (savedState) {
+      const state = JSON.parse(savedState);
+      setDepartment(state.department);
+      setSession(state.session);
+      setStudents(state.students);
+      setApproved(state.approved);
+      setPage(state.page);
+      setTotal(state.total);
+      setTimeout(() => {
+        window.scrollTo({ top: localStorage.getItem("scrollY") || 0 });
+      }, 100);
+      localStorage.removeItem("teacherPageState");
+      localStorage.removeItem("scrollY");
+    }
+  }, []);
+
+  // ✅ Save scroll position before navigating
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      localStorage.setItem("scrollY", window.scrollY);
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, []);
+
   // ✅ Check teacher login
   useEffect(() => {
     const data = localStorage.getItem("teacherData");
@@ -43,7 +71,6 @@ const AllStudent = () => {
       const data = await res.json();
 
       if (res.ok) {
-        // Separate approved & pending
         const approvedStudents = data.students.filter((s) => s.approved);
         const pendingStudents = data.students.filter((s) => !s.approved);
 
@@ -68,21 +95,13 @@ const AllStudent = () => {
     }
   };
 
-  // Load more batch
-  const handleLoadMore = () => {
-    const nextPage = page + 1;
-    const maxPage = Math.ceil(total / BATCH_SIZE);
-    if (nextPage <= maxPage) {
-      fetchStudents(nextPage);
-    }
-  };
-
-  // ✅ Approve a student
+  // ✅ Approve student
   const handleApprove = async (id) => {
     try {
-      const res = await fetch(`https://victoria-university-back-end.vercel.app/api/student/approve/${id}`, {
-        method: "PUT",
-      });
+      const res = await fetch(
+        `https://victoria-university-back-end.vercel.app/api/student/approve/${id}`,
+        { method: "PUT" }
+      );
       const data = await res.json();
       if (res.ok) {
         setStudents((prev) => prev.filter((s) => s._id !== id));
@@ -93,7 +112,7 @@ const AllStudent = () => {
     }
   };
 
-  // ✅ Unapprove a student
+  // ✅ Unapprove student
   const handleUnapprove = async (id) => {
     try {
       const res = await fetch(
@@ -110,14 +129,16 @@ const AllStudent = () => {
     }
   };
 
-  // ✅ Delete a student
+  // ✅ Delete student
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this student?")) return;
+    if (!window.confirm("Are you sure you want to delete this student?"))
+      return;
 
     try {
-      const res = await fetch(`https://victoria-university-back-end.vercel.app/api/student/delete/${id}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(
+        `https://victoria-university-back-end.vercel.app/api/student/delete/${id}`,
+        { method: "DELETE" }
+      );
       const data = await res.json();
       if (res.ok) {
         setApproved((prev) => prev.filter((s) => s._id !== id));
@@ -128,7 +149,7 @@ const AllStudent = () => {
     }
   };
 
-  // ✅ Filter by last 3 digits of roll
+  // ✅ Roll filter (last 3 digits)
   const filterByRoll = (list) => {
     if (!searchRoll.trim()) return list;
     return list.filter((student) =>
@@ -146,17 +167,17 @@ const AllStudent = () => {
       <div className="p-5 max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold mb-6 text-center">All Students</h1>
 
-        {/* Department & Session Selection */}
+        {/* Filter section */}
         <div className="bg-white/10 backdrop-blur-md p-6 rounded-2xl shadow-lg max-w-[680px] mx-auto mb-8">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-3">
             <select
               value={department}
               onChange={(e) => setDepartment(e.target.value)}
-              className="p-3 rounded-lg bg-linear-to-br from-green-800 via-teal-700 text-white placeholder-green-600 w-full md:w-auto focus:outline-none focus:ring-2 focus:ring-yellow-400"
+              className="p-3 rounded-lg bg-linear-to-br from-green-800 via-teal-700 text-white w-full md:w-auto focus:ring-2 focus:ring-yellow-400"
             >
               <option value="">Select Department</option>
-              {departments.map((dept, index) => (
-                <option key={index} value={dept} className="bg-teal-600">
+              {departments.map((dept, i) => (
+                <option key={i} value={dept} className="bg-teal-600">
                   {dept}
                 </option>
               ))}
@@ -165,11 +186,11 @@ const AllStudent = () => {
             <select
               value={session}
               onChange={(e) => setSession(e.target.value)}
-              className="p-3 rounded-lg bg-linear-to-br from-green-800 via-teal-700 text-white placeholder-green-600 w-full md:w-auto focus:outline-none focus:ring-2 focus:ring-yellow-400"
+              className="p-3 rounded-lg bg-linear-to-br from-green-800 via-teal-700 text-white w-full md:w-auto focus:ring-2 focus:ring-yellow-400"
             >
               <option value="">Select Session</option>
-              {sessions.map((sess, index) => (
-                <option key={index} value={sess} className="bg-teal-600">
+              {sessions.map((sess, i) => (
+                <option key={i} value={sess} className="bg-teal-600">
                   {sess}
                 </option>
               ))}
@@ -185,7 +206,7 @@ const AllStudent = () => {
           </div>
         </div>
 
-        {/* 🔍 Search Filter */}
+        {/* Search */}
         {(students.length > 0 || approved.length > 0) && (
           <div className="text-center mb-6">
             <input
@@ -193,66 +214,14 @@ const AllStudent = () => {
               placeholder="Search by last 3 digits of roll..."
               value={searchRoll}
               onChange={(e) => setSearchRoll(e.target.value)}
-              className="p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 w-full md:w-1/2"
+              className="p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 focus:ring-2 focus:ring-yellow-400 w-full md:w-1/2"
             />
-          </div>
-        )}
-
-        {/* Pending Students */}
-        {filteredPending.length > 0 && (
-          <div className="bg-white/10 backdrop-blur-md p-5 rounded-2xl shadow-lg mb-8 overflow-x-auto">
-            <h2 className="text-xl font-semibold mb-4">Pending Students</h2>
-            <table className="w-full min-w-[600px] text-white border-separate border-spacing-0">
-              <thead className="bg-white/20">
-                <tr>
-                  <th className="p-3 text-left">Name</th>
-                  <th className="p-3 text-left">Roll</th>
-                  <th className="p-3 text-center">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredPending.map((student) => (
-                  <tr
-                    key={student._id}
-                    className="odd:bg-white/5 even:bg-white/10"
-                  >
-                    <td className="p-3">{student.name}</td>
-                    <td className="p-3">{student.roll}</td>
-                    <td className="p-3 text-center">
-                      <button
-                        onClick={() => handleApprove(student._id)}
-                        className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg transition"
-                      >
-                        Approve
-                      </button>
-                      <button
-                        onClick={() => handleDelete(student._id)}
-                        className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg ml-2 transition"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {/* Load More Button */}
-            {students.length + approved.length < total && (
-              <div className="text-center mt-4">
-                <button
-                  onClick={handleLoadMore}
-                  className="bg-blue-500 hover:bg-blue-600 px-6 py-2 rounded-lg transition"
-                >
-                  {loading ? "Loading..." : "Load More"}
-                </button>
-              </div>
-            )}
           </div>
         )}
 
         {/* Approved Students */}
         {filteredApproved.length > 0 && (
-          <div className="bg-white/10 backdrop-blur-md p-5 rounded-2xl shadow-lg overflow-x-auto">
+          <div className="bg-white/10 backdrop-blur-md p-5 rounded-2xl shadow-lg overflow-x-auto mb-4">
             <h2 className="text-xl font-semibold mb-4">Approved Students</h2>
             <table className="w-full min-w-[600px] text-white border-separate border-spacing-0">
               <thead className="bg-white/20">
@@ -269,17 +238,95 @@ const AllStudent = () => {
                     className="odd:bg-white/5 even:bg-white/10"
                   >
                     <td className="p-3">{student.name}</td>
-                    <td className="p-3">{student.roll}</td>
+                    <td className="p-3">{student.roll.slice(-3)}</td>
                     <td className="p-3 text-center space-x-2">
                       <button
+                        onClick={() => {
+                          localStorage.setItem(
+                            "teacherPageState",
+                            JSON.stringify({
+                              department,
+                              session,
+                              students,
+                              approved,
+                              page,
+                              total,
+                            })
+                          );
+                          localStorage.setItem("scrollY", window.scrollY);
+                          window.location.href = `/components/teacher/${student._id}`;
+                        }}
+                        className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg transition"
+                      >
+                        Details
+                      </button>
+
+                      <button
                         onClick={() => handleUnapprove(student._id)}
-                        className="bg-yellow-500 hover:bg-yellow-600 px-3 py-1 rounded-lg transition"
+                        className="bg-yellow-400 hover:bg-yellow-500 px-4 py-2 rounded-lg transition"
                       >
                         Unapprove
                       </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Pending Students */}
+        {filteredPending.length > 0 && (
+          <div className="bg-white/10 backdrop-blur-md p-5 rounded-2xl shadow-lg mb-8 overflow-x-auto">
+            <h2 className="text-xl font-semibold mb-4">Pending Students</h2>
+            <table className="w-full min-w-[600px] text-white border-separate border-spacing-0">
+              <thead className="bg-white/20">
+                <tr>
+                  <th className="p-3 text-left">Name</th>
+                  <th className="p-3 text-left">Roll</th>
+                  <th className="p-3 text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredPending.map((student) => (
+                  <tr
+                    key={student._id}
+                    className="odd:bg-white/5 even:bg-white/10"
+                  >
+                    <td className="p-3">{student.name}</td>
+                    <td className="p-3">{student.roll.slice(-3)}</td>
+
+                    <td className="p-3 text-center space-x-2">
+                      <button
+                        onClick={() => handleApprove(student._id)}
+                        className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg transition"
+                      >
+                        Approve
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          localStorage.setItem(
+                            "teacherPageState",
+                            JSON.stringify({
+                              department,
+                              session,
+                              students,
+                              approved,
+                              page,
+                              total,
+                            })
+                          );
+                          localStorage.setItem("scrollY", window.scrollY);
+                          window.location.href = `/components/teacher/${student._id}`;
+                        }}
+                        className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg transition"
+                      >
+                        Details
+                      </button>
                       <button
                         onClick={() => handleDelete(student._id)}
-                        className="bg-red-500 hover:bg-red-600 px-3 py-1 rounded-lg transition"
+                        className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg transition"
                       >
                         Delete
                       </button>
@@ -290,34 +337,6 @@ const AllStudent = () => {
             </table>
           </div>
         )}
-
-        {/* 🧩 No Data Found */}
-        {!loading &&
-          students.length === 0 &&
-          approved.length === 0 &&
-          department &&
-          session && (
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="bg-white/10 backdrop-blur-md text-center text-white p-10 rounded-2xl shadow-2xl mt-10 border border-white/20"
-            >
-              <h2 className="text-3xl font-semibold mb-3 text-yellow-400">
-                No Students Found 😢
-              </h2>
-              <p className="text-gray-200 max-w-md mx-auto">
-                We couldn’t find any students for the selected{" "}
-                <span className="font-medium text-yellow-300">{department}</span>{" "}
-                department and{" "}
-                <span className="font-medium text-yellow-300">{session}</span>{" "}
-                session.
-              </p>
-              <p className="text-gray-400 text-sm mt-3">
-                Please double-check your selection or try again later.
-              </p>
-            </motion.div>
-          )}
       </div>
     </div>
   );
