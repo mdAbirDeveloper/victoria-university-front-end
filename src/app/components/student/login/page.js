@@ -69,7 +69,7 @@ const Login = () => {
         <div className="flex flex-col items-center mb-6">
           <FaUniversity className="text-5xl text-yellow-400 mb-3" />
           <h1 className="text-2xl font-semibold text-center text-white">
-            Victoria University Login
+            Victoria University Student Login
           </h1>
           <p className="text-sm text-gray-300 mt-2">
             Please enter your credentials to continue
