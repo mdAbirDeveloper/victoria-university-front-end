@@ -406,7 +406,7 @@ const Attendance = () => {
                       return (
                         <tr key={student._id} className="hover:bg-teal-600">
                           <td className="py-2 px-4">{student.name}</td>
-                          <td className="py-2 px-4">{student.roll}</td>
+                          <td className="p-3">{student.roll.slice(-3)}</td>
                           <td className="py-2 px-4 text-center">
                             {isPresent ? (
                               <div className="flex justify-center items-center gap-3">

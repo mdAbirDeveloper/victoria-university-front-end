@@ -284,12 +284,20 @@ const TeacherTokenPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {usedByList.map((s, idx) => (
-                    <tr key={idx} className="border-t border-white/10">
-                      <td className="py-2 px-3">{s.name}</td>
-                      <td className="py-2 px-3">{s.roll}</td>
-                    </tr>
-                  ))}
+                  {usedByList
+                    .slice() // মূল list না পরিবর্তন করতে
+                    .sort((a, b) => {
+                      // roll এর last 3 digit নিয়ে compare
+                      const rollA = parseInt(a.roll.slice(-3), 10);
+                      const rollB = parseInt(b.roll.slice(-3), 10);
+                      return rollA - rollB; // ascending
+                    })
+                    .map((s, idx) => (
+                      <tr key={idx} className="border-t border-white/10">
+                        <td className="py-2 px-3">{s.name}</td>
+                        <td className="py-2 px-3">{s.roll.slice(-3)}</td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             ) : (

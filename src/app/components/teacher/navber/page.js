@@ -2,7 +2,12 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { FaChalkboardTeacher, FaSignOutAlt, FaBars, FaTimes } from "react-icons/fa";
+import {
+  FaChalkboardTeacher,
+  FaSignOutAlt,
+  FaBars,
+  FaTimes,
+} from "react-icons/fa";
 
 const TeacherNavbar = () => {
   const router = useRouter();
@@ -26,7 +31,7 @@ const TeacherNavbar = () => {
           className="hover:text-yellow-400 transition"
           onClick={() => router.push("/components/teacher/ganerateToken")}
         >
-          Generate Token
+          Take Attendance
         </button>
         <button
           className="hover:text-yellow-400 transition"
@@ -38,7 +43,7 @@ const TeacherNavbar = () => {
           className="hover:text-yellow-400 transition"
           onClick={() => router.push("/components/teacher/attendance")}
         >
-          Take Attendance
+          Attendance Correction
         </button>
         {/* <button
           className="hover:text-yellow-400 transition"
@@ -85,7 +90,7 @@ const TeacherNavbar = () => {
                 setMenuOpen(false);
               }}
             >
-              Generate Token
+              Take Attendance
             </button>
             <button
               className="py-3 hover:text-yellow-400 transition w-full text-center"
@@ -103,7 +108,7 @@ const TeacherNavbar = () => {
                 setMenuOpen(false);
               }}
             >
-              Take Attendance
+              Attendance Correction
             </button>
             {/* <button
               className="py-3 hover:text-yellow-400 transition w-full text-center"

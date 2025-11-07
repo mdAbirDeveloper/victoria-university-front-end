@@ -17,7 +17,7 @@ const StudentAttendance = () => {
   const [selectedStatus, setSelectedStatus] = useState("");
   const [attendanceData, setAttendanceData] = useState([]);
 
-  // ✅ Function to fetch and update student data from backend
+  // ✅ Fetch and update student data from backend
   const refetchStudentData = async (id) => {
     try {
       const res = await fetch(
@@ -39,7 +39,7 @@ const StudentAttendance = () => {
     if (data) {
       const parsed = JSON.parse(data);
       setStudentData(parsed);
-      refetchStudentData(parsed._id); // Always refresh from server on mount
+      refetchStudentData(parsed._id); // refresh from server on mount
     } else {
       alert("You must be logged in as a student!");
       window.location.href = "/";
@@ -48,23 +48,29 @@ const StudentAttendance = () => {
 
   // ✅ Filter logic
   useEffect(() => {
-    if (!selectedSubject || !studentData) return;
-    let filtered = studentData.present.filter(
-      (p) => p.subject === selectedSubject
-    );
+    if (!studentData) return;
 
-    if (selectedYear)
-      filtered = filtered.filter((p) =>
-        p.date.startsWith(selectedYear.toString())
-      );
+    let filtered = studentData.present;
 
-    if (selectedMonth)
-      filtered = filtered.filter((p) =>
-        p.date.startsWith(
-          `${selectedYear || p.date.slice(0, 4)}-${selectedMonth}`
-        )
-      );
+    // Subject filter
+    if (selectedSubject) {
+      filtered = filtered.filter((p) => p.subject === selectedSubject);
+    }
 
+    // Year filter
+    if (selectedYear) {
+      filtered = filtered.filter((p) => p.date.startsWith(selectedYear));
+    }
+
+    // Month filter
+    if (selectedMonth) {
+      filtered = filtered.filter((p) => {
+        const year = selectedYear || p.date.slice(0, 4);
+        return p.date.startsWith(`${year}-${selectedMonth}`);
+      });
+    }
+
+    // Status filter
     if (selectedStatus) {
       filtered = filtered.filter((p) =>
         selectedStatus === "present" ? p.isPresent : !p.isPresent
@@ -80,7 +86,7 @@ const StudentAttendance = () => {
     studentData,
   ]);
 
-  // ✅ Handle attendance submission + refetch data
+  // ✅ Handle attendance submission + refetch
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!tokenInput.trim()) return alert("Please enter a token!");
@@ -102,10 +108,9 @@ const StudentAttendance = () => {
       );
 
       const data = await res.json();
-      console.log(res)
       if (res.ok) {
         setMessage("✅ Attendance recorded successfully!");
-        await refetchStudentData(studentData._id); // refresh latest data
+        await refetchStudentData(studentData._id);
       } else {
         setMessage(`❌ ${data.message}`);
       }
@@ -136,14 +141,13 @@ const StudentAttendance = () => {
     setSelectedYear("");
     setSelectedMonth("");
     setSelectedStatus("");
-    setAttendanceData([]);
   };
 
   return (
     <div className="bg-linear-to-br from-blue-900 via-purple-800 to-indigo-900 min-h-screen">
       <StudentNavbar />
       <div className="min-h-screen flex flex-col items-center p-4 space-y-6">
-        {/* ✅ Attendance Form */}
+        {/* Attendance Form */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -181,14 +185,14 @@ const StudentAttendance = () => {
           )}
         </motion.div>
 
-        {/* ✅ Subject & Chart Section */}
+        {/* Subject & Chart Section */}
         {studentData && (
           <div className="bg-white/10 backdrop-blur-lg p-6 rounded-2xl shadow-xl w-full md:max-w-5xl text-white">
             <h2 className="text-xl font-semibold mb-4 text-yellow-400 text-center">
               View Attendance Report
             </h2>
 
-            {/* ✅ Filters */}
+            {/* Filters */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3 w-full max-w-4xl mx-auto mb-6">
               {/* Subject */}
               <select
@@ -197,7 +201,7 @@ const StudentAttendance = () => {
                 onChange={(e) => setSelectedSubject(e.target.value)}
               >
                 <option className="bg-purple-700" value="">
-                  Select Subject
+                  All Subjects
                 </option>
                 {[...new Set(studentData.present.map((p) => p.subject))].map(
                   (subject) => (
@@ -219,7 +223,7 @@ const StudentAttendance = () => {
                 onChange={(e) => setSelectedYear(e.target.value)}
               >
                 <option className="bg-purple-700" value="">
-                  Select Year
+                  All Years
                 </option>
                 {uniqueYears.map((year) => (
                   <option key={year} value={year} className="bg-purple-700">
@@ -235,7 +239,7 @@ const StudentAttendance = () => {
                 onChange={(e) => setSelectedMonth(e.target.value)}
               >
                 <option className="bg-purple-700" value="">
-                  Select Month
+                  All Months
                 </option>
                 {Array.from({ length: 12 }, (_, i) => {
                   const month = String(i + 1).padStart(2, "0");
@@ -274,68 +278,64 @@ const StudentAttendance = () => {
             </div>
 
             {/* Chart + Table */}
-            {selectedSubject && (
-              <div className="mt-6 flex flex-col items-center w-full">
-                <PieChart width={320} height={320}>
-                  <Pie
-                    data={chartData}
-                    dataKey="value"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={100}
-                    label
-                  >
-                    {chartData.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                  <Legend />
-                </PieChart>
+            <div className="mt-6 flex flex-col items-center w-full">
+              <PieChart width={320} height={320}>
+                <Pie
+                  data={chartData}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={100}
+                  label
+                >
+                  {chartData.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </PieChart>
 
-                <table className="w-full mt-6 text-sm border border-white/20">
-                  <thead className="bg-white/20">
-                    <tr>
-                      <th className="py-2 px-3 text-left">Date</th>
-                      <th className="py-2 px-3 text-center">Class</th>
-                      <th className="py-2 px-3 text-center">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {attendanceData.length > 0 ? (
-                      attendanceData.map((a, i) => (
-                        <tr key={i} className="border-t border-white/10">
-                          <td className="py-2 px-3">{a.date}</td>
-                          <td className="py-2 px-3 text-center">
-                            {a.classNumber}
-                          </td>
-                          <td
-                            className={`py-2 px-3 text-center font-semibold ${
-                              a.isPresent ? "text-green-400" : "text-red-400"
-                            }`}
-                          >
-                            {a.isPresent ? "Present" : "Absent"}
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
+              <table className="w-full mt-6 text-sm border border-white/20">
+                <thead className="bg-white/20">
+                  <tr>
+                    <th className="py-2 px-3 text-left">Date</th>
+                    <th className="py-2 px-3 text-center">Class</th>
+                    <th className="py-2 px-3 text-center">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {attendanceData.length > 0 ? (
+                    attendanceData.map((a, i) => (
+                      <tr key={i} className="border-t border-white/10">
+                        <td className="py-2 px-3">{a.date}</td>
+                        <td className="py-2 px-3 text-center">{a.classNumber}</td>
                         <td
-                          colSpan="3"
-                          className="text-center py-3 text-gray-300 italic"
+                          className={`py-2 px-3 text-center font-semibold ${
+                            a.isPresent ? "text-green-400" : "text-red-400"
+                          }`}
                         >
-                          No records found for selected filters.
+                          {a.isPresent ? "Present" : "Absent"}
                         </td>
                       </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            )}
+                    ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan="3"
+                        className="text-center py-3 text-gray-300 italic"
+                      >
+                        No records found for selected filters.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>
