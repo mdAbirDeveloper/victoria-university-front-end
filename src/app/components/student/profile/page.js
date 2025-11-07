@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FaUserGraduate, FaEdit, FaEye, FaEyeSlash } from "react-icons/fa";
 import StudentNavbar from "../navber/page";
+import { useRouter } from "next/navigation";
 
 const StudentProfile = () => {
   const [student, setStudent] = useState(null);
@@ -14,6 +15,24 @@ const StudentProfile = () => {
     password: "",
   });
   const [loading, setLoading] = useState(false);
+
+  const router = useRouter();
+  useEffect(() => {
+    const stored = localStorage.getItem("studentData");
+    if (stored) {
+      const data = JSON.parse(stored);
+      setStudent(data);
+      setFormData({
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        department: data.department,
+        password: "",
+      });
+    } else {
+      router.push("/components/student/login");
+    }
+  }, [router]);
 
   // Load student data from localStorage
   useEffect(() => {
@@ -33,16 +52,19 @@ const StudentProfile = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch("https://victoria-university-back-end.vercel.app/api/student/update", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          phone: student.phone,
-          name: formData.name,
-          newPhone: formData.phone,
-          password: formData.password,
-        }),
-      });
+      const res = await fetch(
+        "https://victoria-university-back-end.vercel.app/api/student/update",
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            phone: student.phone,
+            name: formData.name,
+            newPhone: formData.phone,
+            password: formData.password,
+          }),
+        }
+      );
       const data = await res.json();
       if (!res.ok) {
         alert(data.message || "Update failed");
