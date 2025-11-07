@@ -17,6 +17,20 @@ const Attendance = () => {
   const [summary, setSummary] = useState({ total: 0, present: 0, absent: 0 });
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   const [message, setMessage] = useState({ type: "", text: "" }); // UI message
+  const [teacherData, setTeacherData] = useState(null);
+
+  // Load teacher info only
+  useEffect(() => {
+    const storedTeacher = localStorage.getItem("teacherData");
+    if (storedTeacher) {
+      const parsed = JSON.parse(storedTeacher);
+      setTeacherData(parsed);
+    } else {
+      alert("You must be logged in as a teacher to access this page!");
+      window.location.href = "/components/teacher/login";
+      return;
+    }
+  }, []);
 
   // ✅ Recalculate summary
   useEffect(() => {
