@@ -206,6 +206,20 @@ const AllStudent = () => {
           </div>
         </div>
 
+        
+        {/* Search */}
+        {(students.length > 0 || approved.length > 0) && (
+          <div className="text-center mb-6">
+            <input
+              type="text"
+              placeholder="Search by last 3 digits of roll..."
+              value={searchRoll}
+              onChange={(e) => setSearchRoll(e.target.value)}
+              className="p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 focus:ring-2 focus:ring-yellow-400 w-full md:w-1/2"
+            />
+          </div>
+        )}
+
         {/* No Student Found Message */}
         {filteredApproved.length === 0 &&
           filteredPending.length === 0 &&
@@ -232,18 +246,6 @@ const AllStudent = () => {
             </div>
           )}
 
-        {/* Search */}
-        {(students.length > 0 || approved.length > 0) && (
-          <div className="text-center mb-6">
-            <input
-              type="text"
-              placeholder="Search by last 3 digits of roll..."
-              value={searchRoll}
-              onChange={(e) => setSearchRoll(e.target.value)}
-              className="p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 focus:ring-2 focus:ring-yellow-400 w-full md:w-1/2"
-            />
-          </div>
-        )}
 
         {/* Approved Students */}
         {filteredApproved.length > 0 && (

@@ -8,7 +8,13 @@ import {
   FaBars,
   FaTimes,
 } from "react-icons/fa";
-import { Search, User } from "lucide-react";
+import {
+  ClipboardCheck,
+  ClipboardList,
+  Search,
+  User,
+  Users,
+} from "lucide-react";
 
 const TeacherNavbar = () => {
   const router = useRouter();
@@ -51,21 +57,30 @@ const TeacherNavbar = () => {
           <span>Profile</span>
         </button>
         <button
-          className="hover:text-yellow-400 transition"
-          onClick={() => router.push("/components/teacher/ganerateToken")}
+          className="py-3 hover:text-yellow-400 transition text-center flex items-center justify-center gap-2"
+          onClick={() => {
+            router.push("/components/teacher/ganerateToken");
+            setMenuOpen(false);
+          }}
         >
+          <ClipboardCheck size={20} />
           Take Attendance
         </button>
         <button
-          className="hover:text-yellow-400 transition"
+          className="hover:text-yellow-400 transition flex items-center gap-2"
           onClick={() => router.push("/components/teacher/allStudents")}
         >
+          <Users size={20} />
           All Students
         </button>
         <button
-          className="hover:text-yellow-400 transition"
-          onClick={() => router.push("/components/teacher/attendance")}
+          className="py-3 hover:text-yellow-400 transition text-center flex items-center justify-center gap-2"
+          onClick={() => {
+            router.push("/components/teacher/attendance");
+            setMenuOpen(false);
+          }}
         >
+          <ClipboardList size={20} />
           Attendance Management
         </button>
         <button
@@ -118,30 +133,30 @@ const TeacherNavbar = () => {
               <span>Profile</span>
             </button>
             <button
-              className="py-3 hover:text-yellow-400 transition w-full text-center"
+              className="py-3 hover:text-yellow-400 transition w-full text-center flex items-center justify-center gap-2"
               onClick={() => {
                 router.push("/components/teacher/ganerateToken");
                 setMenuOpen(false);
               }}
             >
+              <ClipboardCheck size={20} />
               Take Attendance
             </button>
             <button
-              className="py-3 hover:text-yellow-400 transition w-full text-center"
-              onClick={() => {
-                router.push("/components/teacher/allStudents");
-                setMenuOpen(false);
-              }}
+              className="py-3 hover:text-yellow-400 transition flex items-center gap-2"
+              onClick={() => router.push("/components/teacher/allStudents")}
             >
+              <Users size={20} />
               All Students
             </button>
             <button
-              className="py-3 hover:text-yellow-400 transition w-full text-center"
+              className="py-3 hover:text-yellow-400 transition w-full text-center flex items-center justify-center gap-2"
               onClick={() => {
                 router.push("/components/teacher/attendance");
                 setMenuOpen(false);
               }}
             >
+              <ClipboardList size={20} />
               Attendance Management
             </button>
             <button

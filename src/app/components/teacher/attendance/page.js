@@ -261,7 +261,7 @@ const Attendance = () => {
           </h2>
 
           {/* Message Box */}
-          {message.text && (
+          {/* {message.text && (
             <div
               className={`my-4 p-3 rounded-lg text-center font-medium ${
                 message.type === "error"
@@ -273,7 +273,7 @@ const Attendance = () => {
             >
               {message.text}
             </div>
-          )}
+          )} */}
 
           {/* Mode Switch */}
           <div className="flex justify-center gap-3 mb-6">

@@ -12,7 +12,7 @@ const StudentCards = ({ students }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {students.map((student) => {
-        // Total attendance (all subjects combined)
+        // ✅ Total attendance count (overall)
         const totalAttendance = student.present.reduce(
           (acc, rec) => {
             if (rec.isPresent) acc.Present += 1;
@@ -22,21 +22,31 @@ const StudentCards = ({ students }) => {
           { Present: 0, Absent: 0 }
         );
 
+        // ✅ Subject-wise breakdown
+        const subjectWise = {};
+        student.present.forEach((rec) => {
+          if (!subjectWise[rec.subject]) {
+            subjectWise[rec.subject] = { Present: 0, Absent: 0 };
+          }
+          if (rec.isPresent) subjectWise[rec.subject].Present += 1;
+          else subjectWise[rec.subject].Absent += 1;
+        });
+
         const chartData = [
           { name: "Present", value: totalAttendance.Present },
           { name: "Absent", value: totalAttendance.Absent },
         ];
 
-        const COLORS = ["#FFFFFF", "#EF4444"]; // green / red
+        const COLORS = ["#22c55e", "#ef4444"]; // green / red
 
         return (
           <div
             key={student._id}
-            className="bg-gray-400 text-black backdrop-blur-md rounded-2xl p-6 shadow-lg hover:scale-105 transition-transform duration-300 flex flex-col justify-between"
+            className="bg-gray-800 text-white rounded-2xl p-6 shadow-lg hover:scale-105 transition-transform duration-300 flex flex-col justify-between"
           >
             {/* Basic Info */}
             <div>
-              <h2 className="text-2xl font-bold mb-2 text-white">
+              <h2 className="text-2xl font-bold mb-2 text-yellow-300">
                 {student.name}
               </h2>
               <p>
@@ -53,22 +63,22 @@ const StudentCards = ({ students }) => {
               </p>
 
               {/* Additional Info */}
-              <p>
+              <p className="mt-2">
                 <strong>Address:</strong> {student.address}
               </p>
               <p>
-                <strong>Father Name:</strong> {student.fatherName} (
+                <strong>Father:</strong> {student.fatherName} (
                 {student.fatherPhone})
               </p>
               <p>
-                <strong>Mother Name:</strong> {student.motherName} (
+                <strong>Mother:</strong> {student.motherName} (
                 {student.motherPhone})
               </p>
             </div>
 
             {/* Attendance Pie Chart */}
             <div className="mt-6">
-              <h3 className="text-white font-semibold mb-3 text-center">
+              <h3 className="text-yellow-300 font-semibold mb-3 text-center">
                 Overall Attendance
               </h3>
               {student.present.length > 0 ? (
@@ -97,7 +107,7 @@ const StudentCards = ({ students }) => {
                     <Tooltip
                       formatter={(value, name) => [`${value}`, `${name}`]}
                       contentStyle={{
-                        backgroundColor: "#FFFFF",
+                        backgroundColor: "#FFFF",
                         borderRadius: "8px",
                         color: "#fff",
                       }}
@@ -114,6 +124,26 @@ const StudentCards = ({ students }) => {
                   No attendance records
                 </p>
               )}
+            </div>
+
+            {/* ✅ Subject-wise Details */}
+            <div className="mt-6 border-t border-gray-600 pt-4">
+              <h4 className="text-yellow-300 font-semibold mb-2">
+                Subject-wise Attendance:
+              </h4>
+              <ul className="space-y-1">
+                {Object.entries(subjectWise).map(([subject, data]) => (
+                  <li
+                    key={subject}
+                    className="flex justify-between text-sm bg-gray-700 px-3 py-2 rounded-lg"
+                  >
+                    <span className="font-medium">{subject}</span>
+                    <span>
+                      ✅ {data.Present} | ❌ {data.Absent}
+                    </span>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         );
