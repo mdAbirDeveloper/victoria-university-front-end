@@ -8,6 +8,7 @@ import {
   FaBars,
   FaTimes,
 } from "react-icons/fa";
+import { Search, User } from "lucide-react";
 
 const TeacherNavbar = () => {
   const router = useRouter();
@@ -40,10 +41,14 @@ const TeacherNavbar = () => {
       {/* Desktop Menu */}
       <div className="hidden text-white font-bold md:flex gap-5 text-sm sm:text-base">
         <button
-          className="hover:text-yellow-400 transition"
-          onClick={() => router.push("/components/teacher/profile")}
+          className="flex items-center justify-center gap-2 py-3 hover:text-yellow-400 transition text-center"
+          onClick={() => {
+            router.push("/components/teacher/profile");
+            setMenuOpen(false);
+          }}
         >
-          Profile
+          <User className="w-5 h-5" /> {/* 👈 Profile icon */}
+          <span>Profile</span>
         </button>
         <button
           className="hover:text-yellow-400 transition"
@@ -61,13 +66,14 @@ const TeacherNavbar = () => {
           className="hover:text-yellow-400 transition"
           onClick={() => router.push("/components/teacher/attendance")}
         >
-          Attendance Correction
+          Attendance Management
         </button>
         <button
-          className="hover:text-yellow-400 transition"
+          className="flex items-center gap-2 hover:text-yellow-400 transition"
           onClick={() => router.push("/components/teacher/findStudent")}
         >
-          Find Student
+          <Search className="w-5 h-5" /> {/* 👈 search icon */}
+          <span>Find Student</span>
         </button>
         {/* <button
           className="hover:text-yellow-400 transition"
@@ -102,13 +108,14 @@ const TeacherNavbar = () => {
             className="absolute text-white font-bold top-full left-0 w-full bg-linear-to-br from-green-800 via-teal-700 to-blue-700  backdrop-blur-md border-t border-white/20 flex flex-col items-center md:hidden"
           >
             <button
-              className="py-3 hover:text-yellow-400 transition w-full text-center"
+              className="flex items-center justify-center gap-2 py-3 hover:text-yellow-400 transition w-full text-center"
               onClick={() => {
                 router.push("/components/teacher/profile");
                 setMenuOpen(false);
               }}
             >
-              Profile
+              <User className="w-5 h-5" /> {/* 👈 Profile icon */}
+              <span>Profile</span>
             </button>
             <button
               className="py-3 hover:text-yellow-400 transition w-full text-center"
@@ -135,13 +142,14 @@ const TeacherNavbar = () => {
                 setMenuOpen(false);
               }}
             >
-              Attendance Correction
+              Attendance Management
             </button>
             <button
-              className="py-3 hover:text-yellow-400 transition"
+              className="py-3 flex items-center gap-2 hover:text-yellow-400 transition"
               onClick={() => router.push("/components/teacher/findStudent")}
             >
-              Find Student
+              <Search className="w-5 h-5" /> {/* 👈 search icon */}
+              <span>Find Student</span>
             </button>
             {/* <button
               className="py-3 hover:text-yellow-400 transition w-full text-center"
