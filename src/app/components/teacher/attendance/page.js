@@ -23,7 +23,10 @@ const Attendance = () => {
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   const [message, setMessage] = useState({ type: "", text: "" }); // UI message
   const [teacherData, setTeacherData] = useState(null);
+  const [approved, setApproved] = useState([]);
   const [availableSubjects, setAvailableSubjects] = useState([]);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
 
   // Load teacher info only
   useEffect(() => {
@@ -47,6 +50,41 @@ const Attendance = () => {
       setAvailableSubjects([]);
     }
   }, [department]);
+
+  // ✅ Restore previous page state (filter, data, scroll)
+  useEffect(() => {
+    const savedState = localStorage.getItem("teacherPageState");
+    if (savedState) {
+      const state = JSON.parse(savedState);
+      setDepartment(state.department); // 1. Department restore
+      // 2. wait for availableSubjects update, then set subject
+      setTimeout(() => {
+        setSubject(state.subject);
+        setSession(state.session);
+        setStudents(state.students);
+        setApproved(state.approved);
+        setPage(state.page);
+        setTotal(state.total);
+        setClassNumber(state.classNumber);
+        setToken(state.token);
+        setMode(state.mode)
+
+        window.scrollTo({ top: localStorage.getItem("scrollY") || 0 });
+
+        localStorage.removeItem("teacherPageState");
+        localStorage.removeItem("scrollY");
+      }, 50); // small delay to ensure availableSubjects updated
+    }
+  }, []);
+
+  // ✅ Save scroll position before navigating
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      localStorage.setItem("scrollY", window.scrollY);
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, []);
 
   // ✅ Recalculate summary
   useEffect(() => {
@@ -416,6 +454,9 @@ const Attendance = () => {
                     <th className="py-3 px-4 text-center font-semibold">
                       Attendance
                     </th>
+                    <th className="py-3 px-4 text-left font-semibold">
+                      Action
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-300">
@@ -470,6 +511,32 @@ const Attendance = () => {
                                 Mark Present
                               </button>
                             )}
+                          </td>
+                          <td className="text-center">
+                            <button
+                              onClick={() => {
+                                localStorage.setItem(
+                                  "teacherPageState",
+                                  JSON.stringify({
+                                    department,
+                                    session,
+                                    students,
+                                    approved,
+                                    page,
+                                    total,
+                                    subject,
+                                    classNumber,
+                                    token,
+                                    mode,
+                                  })
+                                );
+                                localStorage.setItem("scrollY", window.scrollY);
+                                window.location.href = `/components/teacher/${student._id}`;
+                              }}
+                              className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg transition"
+                            >
+                              Details
+                            </button>
                           </td>
                         </tr>
                       );

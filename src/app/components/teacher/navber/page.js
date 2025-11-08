@@ -14,7 +14,19 @@ const TeacherNavbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = () => {
+    // Teacher data মুছে দাও
     localStorage.removeItem("teacherData");
+
+    // Attendance বা page state সম্পর্কিত সব data মুছে দাও
+    localStorage.removeItem("attendanceStudents");
+    localStorage.removeItem("teacherToken");
+    localStorage.removeItem("teacherPageState");
+    localStorage.removeItem("scrollY");
+
+    // যদি আরও কিছু save থাকে, সেটা মুছে দিতে চাইলে এখানে add করো
+    // localStorage.clear(); // ⚠️ এটি সব data মুছে দেবে
+
+    // Login page এ redirect
     router.push("/components/teacher/login");
   };
 
@@ -45,13 +57,13 @@ const TeacherNavbar = () => {
         >
           Attendance Correction
         </button>
-        {/* <button
-          className="hover:text-yellow-400 transition"
-          onClick={() => router.push("/components/teacher/gtp")}
-        >
-          GTP
-        </button>
         <button
+          className="hover:text-yellow-400 transition"
+          onClick={() => router.push("/components/teacher/findStudent")}
+        >
+          Find Student
+        </button>
+        {/* <button
           className="hover:text-yellow-400 transition"
           onClick={() => router.push("/components/teacher/results")}
         >
@@ -110,16 +122,13 @@ const TeacherNavbar = () => {
             >
               Attendance Correction
             </button>
-            {/* <button
-              className="py-3 hover:text-yellow-400 transition w-full text-center"
-              onClick={() => {
-                router.push("/components/teacher/gtp");
-                setMenuOpen(false);
-              }}
-            >
-              GTP
-            </button>
             <button
+              className="hover:text-yellow-400 transition"
+              onClick={() => router.push("/components/teacher/findStudent")}
+            >
+              Find Student
+            </button>
+            {/* <button
               className="py-3 hover:text-yellow-400 transition w-full text-center"
               onClick={() => {
                 router.push("/components/teacher/results");

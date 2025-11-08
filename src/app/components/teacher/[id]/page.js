@@ -44,11 +44,13 @@ const StudentDetails = () => {
   }, [id]);
 
   const handleBack = () => {
-    const prev = localStorage.getItem("teacherPageState");
-    if (prev) {
-      window.history.back();
+    const prevPage = localStorage.getItem("teacherPrevPage");
+    if (prevPage) {
+      window.location.href = prevPage; // je page theke esheche shei page e pathabe
+      localStorage.removeItem("teacherPrevPage"); // optional cleanup
     } else {
-      window.location.href = "/components/teacher/allstudent";
+      // Fallback, jodi kono previous page na thake
+      window.history.back();
     }
   };
 
