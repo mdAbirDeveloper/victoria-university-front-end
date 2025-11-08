@@ -8,6 +8,20 @@ const FindStudents = () => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [teacherData, setTeacherData] = useState(null);
+
+  // Load teacher info only
+  useEffect(() => {
+    const storedTeacher = localStorage.getItem("teacherData");
+    if (storedTeacher) {
+      const parsed = JSON.parse(storedTeacher);
+      setTeacherData(parsed);
+    } else {
+      alert("You must be logged in as a teacher to access this page!");
+      window.location.href = "/components/teacher/login";
+      return;
+    }
+  }, []);
 
   // Fetch students based on search
   useEffect(() => {
@@ -51,7 +65,6 @@ const FindStudents = () => {
     <div className="bg-linear-to-br from-green-800 via-teal-700 to-blue-700">
       <TeacherNavbar />
       <div className="min-h-screen p-6">
-
         <div className="text-white max-w-7xl mx-auto">
           <h1 className="text-4xl font-bold text-center mb-6 animate-fadeIn">
             🔍 Find Students
