@@ -29,7 +29,9 @@ const StudentDetails = () => {
   useEffect(() => {
     const fetchStudent = async () => {
       try {
-        const res = await fetch(`https://victoria-university-back-end.vercel.app/api/student/${id}`);
+        const res = await fetch(
+          `https://victoria-university-back-end.vercel.app/api/student/${id}`
+        );
         const data = await res.json();
         if (res.ok) setStudent(data.student);
       } catch (err) {
@@ -80,7 +82,8 @@ const StudentDetails = () => {
   const chartData = student?.present
     ? Object.values(
         student.present.reduce((acc, p) => {
-          if (!acc[p.subject]) acc[p.subject] = { subject: p.subject, present: 0, absent: 0 };
+          if (!acc[p.subject])
+            acc[p.subject] = { subject: p.subject, present: 0, absent: 0 };
           if (p.isPresent) acc[p.subject].present++;
           else acc[p.subject].absent++;
           return acc;
@@ -143,15 +146,33 @@ const StudentDetails = () => {
 
           {/* Student Info */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <p><strong>Name:</strong> {student.name}</p>
-            <p><strong>Roll:</strong> {student.roll}</p>
-            <p><strong>Department:</strong> {student.department}</p>
-            <p><strong>Session:</strong> {student.session}</p>
-            <p><strong>Email:</strong> {student.email}</p>
-            <p><strong>Phone:</strong> {student.phone}</p>
-            <p><strong>Father:</strong> {student.fatherName}</p>
-            <p><strong>Mother:</strong> {student.motherName}</p>
-            <p><strong>Address:</strong> {student.address}</p>
+            <p>
+              <strong>Name:</strong> {student.name}
+            </p>
+            <p>
+              <strong>Roll:</strong> {student.roll}
+            </p>
+            <p>
+              <strong>Department:</strong> {student.department}
+            </p>
+            <p>
+              <strong>Session:</strong> {student.session}
+            </p>
+            <p>
+              <strong>Email:</strong> {student.email}
+            </p>
+            <p>
+              <strong>Phone:</strong> {student.phone}
+            </p>
+            <p>
+              <strong>Father:</strong> {student.fatherName}
+            </p>
+            <p>
+              <strong>Mother:</strong> {student.motherName}
+            </p>
+            <p>
+              <strong>Address:</strong> {student.address}
+            </p>
           </div>
 
           {/* Chart Section */}
@@ -161,131 +182,191 @@ const StudentDetails = () => {
             </h2>
 
             {chartData.length > 0 ? (
-              <div className="w-full overflow-x-auto bg-white/10 rounded-lg md:p-4">
-                <div className="min-w-[400px] h-80 sm:h-96">
+              <div className="w-full bg-white rounded-lg p-3 md:p-4 shadow">
+                <div className="h-72 sm:h-96">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                       data={chartData}
                       layout="vertical"
                       margin={{ top: 10, right: 30, left: 20, bottom: 10 }}
                     >
-                      <CartesianGrid strokeDasharray="3 3" stroke="#ccc" />
-                      <XAxis type="number" stroke="#f1f5f9" tick={{ fontSize: 12 }} />
-                      <YAxis dataKey="subject" type="category" stroke="#f1f5f9" tick={{ fontSize: 12 }} width={80} />
-                      <Tooltip contentStyle={{ backgroundColor: "rgba(30,41,59,0.9)", border: "none", color: "#f8fafc" }} />
-                      <Legend wrapperStyle={{ color: "#f8fafc" }} />
-                      <Bar dataKey="present" fill="#4ade80" name="Present" barSize={20} />
-                      <Bar dataKey="absent" fill="#f87171" name="Absent" barSize={20} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                      <XAxis
+                        type="number"
+                        stroke="#334155"
+                        tick={{ fontSize: 12 }}
+                      />
+                      <YAxis
+                        dataKey="subject"
+                        type="category"
+                        stroke="#334155"
+                        tick={{ fontSize: 12 }}
+                        width={90}
+                      />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: "#023B03",
+                          border: "none",
+                          color: "#f8fafc",
+                        }}
+                      />
+                      <Legend wrapperStyle={{ color: "#334155" }} />
+                      <Bar
+                        dataKey="present"
+                        fill="#0841FF"
+                        name="Present"
+                        barSize={22}
+                        radius={[4, 4, 4, 4]}
+                      />
+                      <Bar
+                        dataKey="absent"
+                        fill="#FF0025"
+                        name="Absent"
+                        barSize={22}
+                        radius={[4, 4, 4, 4]}
+                      />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
               </div>
             ) : (
-              <p className="text-gray-300 text-center">No attendance data available.</p>
+              <p className="text-gray-600 text-center">
+                No attendance data available.
+              </p>
             )}
 
             <p className="text-center mt-3 text-sm text-gray-200">
-              ✅ Total Present: <b>{totalPresent}</b> | ❌ Total Absent: <b>{totalAbsent}</b>
+              ✅ Total Present: <b>{totalPresent}</b> | ❌ Total Absent:{" "}
+              <b>{totalAbsent}</b>
             </p>
           </div>
 
           {/* Attendance Table */}
           <div className="mt-8">
-            <h2 className="text-xl font-semibold mb-2 text-yellow-300">Attendance Records</h2>
+            <h2 className="text-xl font-semibold mb-2 text-yellow-300">
+              Attendance Records
+            </h2>
 
-            
-                {/* Filters */}
-                <div className="grid md:grid-cols-5 grid-cols-2 gap-3 mb-4">
-                  <select
-                    style={{ backgroundColor: "teal", color: "white" }}
-                    className="px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
-                    value={filters.year}
-                    onChange={(e) => setFilters((prev) => ({ ...prev, year: e.target.value }))}
-                  >
-                    <option value="">All Years</option>
-                    {[...new Set(student.present.map((p) => new Date(p.date).getFullYear()))].map((year) => (
-                      <option key={year} value={year}>{year}</option>
-                    ))}
-                  </select>
+            {/* Filters */}
+            <div className="grid md:grid-cols-5 grid-cols-2 gap-3 mb-4">
+              <select
+                style={{ backgroundColor: "teal", color: "white" }}
+                className="px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
+                value={filters.year}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, year: e.target.value }))
+                }
+              >
+                <option value="">All Years</option>
+                {[
+                  ...new Set(
+                    student.present.map((p) => new Date(p.date).getFullYear())
+                  ),
+                ].map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
 
-                  <select
-                    style={{ backgroundColor: "teal", color: "white" }}
-                    className="px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
-                    value={filters.month}
-                    onChange={(e) => setFilters((prev) => ({ ...prev, month: e.target.value }))}
-                  >
-                    <option value="">All Months</option>
-                    {[...Array(12).keys()].map((m) => (
-                      <option key={m + 1} value={m + 1}>{new Date(0, m).toLocaleString("default", { month: "long" })}</option>
-                    ))}
-                  </select>
+              <select
+                style={{ backgroundColor: "teal", color: "white" }}
+                className="px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
+                value={filters.month}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, month: e.target.value }))
+                }
+              >
+                <option value="">All Months</option>
+                {[...Array(12).keys()].map((m) => (
+                  <option key={m + 1} value={m + 1}>
+                    {new Date(0, m).toLocaleString("default", {
+                      month: "long",
+                    })}
+                  </option>
+                ))}
+              </select>
 
-                  <select
-                    style={{ backgroundColor: "teal", color: "white" }}
-                    className="px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
-                    value={filters.subject}
-                    onChange={(e) => setFilters((prev) => ({ ...prev, subject: e.target.value }))}
-                  >
-                    <option value="">All Subjects</option>
-                    {[...new Set(student.present.map((p) => p.subject))].map((sub) => (
-                      <option key={sub} value={sub}>{sub}</option>
-                    ))}
-                  </select>
-
-                  <select
-                    style={{ backgroundColor: "teal", color: "white" }}
-                    className="px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
-                    value={filters.status}
-                    onChange={(e) => setFilters((prev) => ({ ...prev, status: e.target.value }))}
-                  >
-                    <option value="">All Status</option>
-                    <option value="present">Present</option>
-                    <option value="absent">Absent</option>
-                  </select>
-
-                  <button
-                    className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 px-3 py-1 rounded-lg transition"
-                    onClick={() => setFilters({ year: "", month: "", subject: "", status: "" })}
-                  >
-                    Reset Filters
-                  </button>
-                </div>
-
-                <div className="overflow-x-auto w-full">
-                  <table className="w-full text-sm bg-white/10 rounded-lg border border-white/20">
-                    <thead className="bg-white/20">
-                      <tr>
-                        <th className="p-2">Subject</th>
-                        <th className="p-2">Class</th>
-                        <th className="p-2">Date</th>
-                        <th className="p-2">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {visibleAttendance.map((p, index) => (
-                        <tr key={index} className="odd:bg-white/5 even:bg-white/10">
-                          <td className="p-2">{p.subject}</td>
-                          <td className="p-2 text-center">{p.classNumber}</td>
-                          <td className="p-2 text-center">{p.date}</td>
-                          <td className={`p-2 text-center ${p.isPresent ? "text-green-400" : "text-red-400"}`}>
-                            {p.isPresent ? "Present" : "Absent"}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                {filteredAttendance.length > 6 && (
-                  <div className="text-center mt-4">
-                    <button
-                      onClick={() => setShowAll(!showAll)}
-                      className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 px-5 py-2 rounded-lg transition"
-                    >
-                      {showAll ? "Show Less" : "Show More"}
-                    </button>
-                  </div>
+              <select
+                style={{ backgroundColor: "teal", color: "white" }}
+                className="px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
+                value={filters.subject}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, subject: e.target.value }))
+                }
+              >
+                <option value="">All Subjects</option>
+                {[...new Set(student.present.map((p) => p.subject))].map(
+                  (sub) => (
+                    <option key={sub} value={sub}>
+                      {sub}
+                    </option>
+                  )
                 )}
+              </select>
+
+              <select
+                style={{ backgroundColor: "teal", color: "white" }}
+                className="px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400"
+                value={filters.status}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, status: e.target.value }))
+                }
+              >
+                <option value="">All Status</option>
+                <option value="present">Present</option>
+                <option value="absent">Absent</option>
+              </select>
+
+              <button
+                className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 px-3 py-1 rounded-lg transition"
+                onClick={() =>
+                  setFilters({ year: "", month: "", subject: "", status: "" })
+                }
+              >
+                Reset Filters
+              </button>
+            </div>
+
+            <div className="overflow-x-auto w-full">
+              <table className="w-full text-sm bg-white/10 rounded-lg border border-white/20">
+                <thead className="bg-white/20">
+                  <tr>
+                    <th className="p-2">Subject</th>
+                    <th className="p-2">Class</th>
+                    <th className="p-2">Date</th>
+                    <th className="p-2">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {visibleAttendance.map((p, index) => (
+                    <tr key={index} className="odd:bg-white/5 even:bg-white/10">
+                      <td className="p-2">{p.subject}</td>
+                      <td className="p-2 text-center">{p.classNumber}</td>
+                      <td className="p-2 text-center">{p.date}</td>
+                      <td
+                        className={`p-2 text-center ${
+                          p.isPresent ? "text-green-400" : "text-red-400"
+                        }`}
+                      >
+                        {p.isPresent ? "Present" : "Absent"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {filteredAttendance.length > 6 && (
+              <div className="text-center mt-4">
+                <button
+                  onClick={() => setShowAll(!showAll)}
+                  className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 px-5 py-2 rounded-lg transition"
+                >
+                  {showAll ? "Show Less" : "Show More"}
+                </button>
+              </div>
+            )}
           </div>
         </motion.div>
       </div>

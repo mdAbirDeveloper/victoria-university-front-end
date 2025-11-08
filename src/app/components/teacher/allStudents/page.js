@@ -199,12 +199,38 @@ const AllStudent = () => {
             <button
               onClick={() => fetchStudents(1)}
               disabled={loading}
-              className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 px-5 py-3 rounded-lg transition-all disabled:opacity-60 w-full md:w-auto"
+              className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 px-12 py-3 rounded-lg transition-all disabled:opacity-60 w-full md:w-auto"
             >
-              {loading ? "Loading..." : "Fetch Students"}
+              {loading ? "Loading..." : "Search"}
             </button>
           </div>
         </div>
+
+        {/* No Student Found Message */}
+        {filteredApproved.length === 0 &&
+          filteredPending.length === 0 &&
+          !loading && (
+            <div className="flex justify-center items-center">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="bg-white/10 backdrop-blur-md p-10 rounded-2xl shadow-lg text-center max-w-md"
+              >
+                <h2 className="text-2xl font-semibold mb-2 text-yellow-300">
+                  No Students Found
+                </h2>
+                <p className="text-white/80">
+                  It looks like there are no students available for your
+                  selected department and session.
+                </p>
+                <p className="mt-3 text-sm text-white/60">
+                  Try selecting a different department or session to see
+                  results.
+                </p>
+              </motion.div>
+            </div>
+          )}
 
         {/* Search */}
         {(students.length > 0 || approved.length > 0) && (

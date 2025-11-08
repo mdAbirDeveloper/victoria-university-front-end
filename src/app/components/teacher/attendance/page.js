@@ -1,6 +1,11 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { departments, sessions, subjects } from "../../../../../data";
+import {
+  departments,
+  departmentSubjects,
+  sessions,
+  subjects,
+} from "../../../../../data";
 import TeacherNavbar from "../navber/page";
 
 const Attendance = () => {
@@ -18,6 +23,7 @@ const Attendance = () => {
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   const [message, setMessage] = useState({ type: "", text: "" }); // UI message
   const [teacherData, setTeacherData] = useState(null);
+  const [availableSubjects, setAvailableSubjects] = useState([]);
 
   // Load teacher info only
   useEffect(() => {
@@ -31,6 +37,16 @@ const Attendance = () => {
       return;
     }
   }, []);
+
+  // যখন department change হবে তখন subject list আপডেট হবে
+  useEffect(() => {
+    if (department && departmentSubjects[department]) {
+      setAvailableSubjects(departmentSubjects[department]);
+      setSubject(""); // নতুন department নিলে পুরনো subject reset
+    } else {
+      setAvailableSubjects([]);
+    }
+  }, [department]);
 
   // ✅ Recalculate summary
   useEffect(() => {
@@ -251,12 +267,12 @@ const Attendance = () => {
               <select
                 value={department}
                 onChange={(e) => setDepartment(e.target.value)}
-                className="border border-gray-300 p-2 rounded-lg text-white"
+                className="p-3 rounded-lg bg-linear-to-br from-green-800 via-teal-700 text-white w-full md:w-auto focus:ring-2 focus:ring-yellow-400"
               >
                 <option value="">Select Department</option>
-                {departments.map((dep) => (
-                  <option className="bg-teal-600" key={dep} value={dep}>
-                    {dep}
+                {departments.map((dept, i) => (
+                  <option key={i} value={dept} className="bg-teal-600">
+                    {dept}
                   </option>
                 ))}
               </select>
@@ -280,7 +296,7 @@ const Attendance = () => {
                 className="border border-gray-300 p-2 rounded-lg text-white"
               >
                 <option value="">Select Subject</option>
-                {subjects.map((sub) => (
+                {availableSubjects.map((sub) => (
                   <option className="bg-teal-600" key={sub} value={sub}>
                     {sub}
                   </option>

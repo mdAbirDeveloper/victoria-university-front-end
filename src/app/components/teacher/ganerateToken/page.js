@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { departments, sessions, subjects } from "../../../../../data";
+import { departments, sessions, departmentSubjects } from "../../../../../data";
 import TeacherNavbar from "../navber/page";
 
 const TeacherTokenPage = () => {
@@ -9,6 +9,7 @@ const TeacherTokenPage = () => {
   const [session, setSession] = useState("");
   const [subject, setSubject] = useState("");
   const [classNumber, setClassNumber] = useState("");
+  const [subjects, setSubjects] = useState([]); // ✅ dynamic subjects
   const [loading, setLoading] = useState(false);
   const [tokenData, setTokenData] = useState(null);
   const [teacherData, setTeacherData] = useState(null);
@@ -28,6 +29,16 @@ const TeacherTokenPage = () => {
       return;
     }
   }, []);
+
+  // Update subjects dynamically when department changes
+  useEffect(() => {
+    if (department) {
+      setSubjects(departmentSubjects[department] || []);
+      setSubject(""); // reset subject when department changes
+    } else {
+      setSubjects([]);
+    }
+  }, [department]);
 
   // Fetch today's tokens whenever department or session changes
   useEffect(() => {
@@ -285,12 +296,11 @@ const TeacherTokenPage = () => {
                 </thead>
                 <tbody>
                   {usedByList
-                    .slice() // মূল list না পরিবর্তন করতে
+                    .slice()
                     .sort((a, b) => {
-                      // roll এর last 3 digit নিয়ে compare
                       const rollA = parseInt(a.roll.slice(-3), 10);
                       const rollB = parseInt(b.roll.slice(-3), 10);
-                      return rollA - rollB; // ascending
+                      return rollA - rollB;
                     })
                     .map((s, idx) => (
                       <tr key={idx} className="border-t border-white/10">
