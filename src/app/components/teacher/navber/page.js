@@ -41,6 +41,12 @@ const TeacherNavbar = () => {
       <div className="hidden text-white font-bold md:flex gap-5 text-sm sm:text-base">
         <button
           className="hover:text-yellow-400 transition"
+          onClick={() => router.push("/components/teacher/profile")}
+        >
+          Profile
+        </button>
+        <button
+          className="hover:text-yellow-400 transition"
           onClick={() => router.push("/components/teacher/ganerateToken")}
         >
           Take Attendance
@@ -95,6 +101,15 @@ const TeacherNavbar = () => {
             transition={{ duration: 0.3 }}
             className="absolute text-white font-bold top-full left-0 w-full bg-linear-to-br from-green-800 via-teal-700 to-blue-700  backdrop-blur-md border-t border-white/20 flex flex-col items-center md:hidden"
           >
+            <button
+              className="py-3 hover:text-yellow-400 transition w-full text-center"
+              onClick={() => {
+                router.push("/components/teacher/profile");
+                setMenuOpen(false);
+              }}
+            >
+              Profile
+            </button>
             <button
               className="py-3 hover:text-yellow-400 transition w-full text-center"
               onClick={() => {
