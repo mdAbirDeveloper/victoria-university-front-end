@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import TeacherNavbar from "../navber/page";
-import StudentCards from "../../page";
+import StudentCards from "../../StudentCards";
 
 const FindStudents = () => {
   const [search, setSearch] = useState("");
