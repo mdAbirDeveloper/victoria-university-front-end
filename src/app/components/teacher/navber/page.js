@@ -123,7 +123,7 @@ const TeacherNavbar = () => {
               Attendance Correction
             </button>
             <button
-              className="hover:text-yellow-400 transition"
+              className="py-3 hover:text-yellow-400 transition"
               onClick={() => router.push("/components/teacher/findStudent")}
             >
               Find Student
