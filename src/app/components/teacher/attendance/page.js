@@ -227,8 +227,8 @@ const Attendance = () => {
           type: "success",
           text: "Attendance updated successfully!",
         });
-        if (mode === "token") await fetchByToken();
-        else await fetchStudents();
+        // if (mode === "token") await fetchByToken();
+        // else await fetchStudents();
       } else setMessage({ type: "error", text: data.message });
     } catch (err) {
       console.error(err);

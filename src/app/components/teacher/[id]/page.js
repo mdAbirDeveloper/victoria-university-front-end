@@ -184,55 +184,111 @@ const StudentDetails = () => {
             </h2>
 
             {chartData.length > 0 ? (
-              <div className="w-full bg-white rounded-lg p-3 md:p-4 shadow">
-                <div className="h-72 sm:h-96">
+              <div className="w-full bg-linear-to-br from-gray-800 via-gray-900 to-black rounded-2xl p-5 shadow-2xl border border-gray-700">
+                <h3 className="text-center text-xl font-semibold text-white mb-4">
+                  Subject-wise Attendance Overview
+                </h3>
+
+                <div className="h-80 sm:h-96">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                       data={chartData}
                       layout="vertical"
-                      margin={{ top: 10, right: 30, left: 20, bottom: 10 }}
+                      margin={{ top: 10, right: 30, left: 1, bottom: 10 }}
                     >
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                      <CartesianGrid
+                        strokeDasharray="3 3"
+                        stroke="#334155"
+                        opacity={0.3}
+                      />
                       <XAxis
                         type="number"
-                        stroke="#334155"
-                        tick={{ fontSize: 12 }}
+                        stroke="#94a3b8"
+                        tick={{ fontSize: 12, fill: "#cbd5e1" }}
                       />
                       <YAxis
                         dataKey="subject"
                         type="category"
-                        stroke="#334155"
-                        tick={{ fontSize: 12 }}
-                        width={90}
+                        stroke="#94a3b8"
+                        tick={{ fontSize: 12, fill: "#f1f5f9" }}
+                        width={100}
                       />
                       <Tooltip
                         contentStyle={{
-                          backgroundColor: "#023B03",
-                          border: "none",
+                          backgroundColor: "rgba(15,23,42,0.9)",
+                          border: "1px solid #334155",
+                          borderRadius: "10px",
                           color: "#f8fafc",
                         }}
+                        cursor={{ fill: "rgba(255,255,255,0.05)" }}
                       />
-                      <Legend wrapperStyle={{ color: "#334155" }} />
+                      <Legend
+                        wrapperStyle={{
+                          color: "#f8fafc",
+                          fontSize: "14px",
+                          paddingTop: "10px",
+                        }}
+                      />
                       <Bar
                         dataKey="present"
-                        fill="#0841FF"
+                        fill="url(#presentGradient)"
                         name="Present"
-                        barSize={22}
+                        barSize={18}
                         radius={[4, 4, 4, 4]}
                       />
                       <Bar
                         dataKey="absent"
-                        fill="#FF0025"
+                        fill="url(#absentGradient)"
                         name="Absent"
-                        barSize={22}
+                        barSize={18}
                         radius={[4, 4, 4, 4]}
                       />
+
+                      {/* ✅ Gradient Definitions */}
+                      <defs>
+                        <linearGradient
+                          id="presentGradient"
+                          x1="0"
+                          y1="0"
+                          x2="1"
+                          y2="0"
+                        >
+                          <stop
+                            offset="5%"
+                            stopColor="#22c55e"
+                            stopOpacity={0.9}
+                          />
+                          <stop
+                            offset="95%"
+                            stopColor="#16a34a"
+                            stopOpacity={0.9}
+                          />
+                        </linearGradient>
+                        <linearGradient
+                          id="absentGradient"
+                          x1="0"
+                          y1="0"
+                          x2="1"
+                          y2="0"
+                        >
+                          <stop
+                            offset="5%"
+                            stopColor="#ef4444"
+                            stopOpacity={0.9}
+                          />
+                          <stop
+                            offset="95%"
+                            stopColor="#b91c1c"
+                            stopOpacity={0.9}
+                          />
+                        </linearGradient>
+                      </defs>
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
               </div>
             ) : (
-              <p className="text-gray-600 text-center">
+              <p className="text-gray-400 text-center italic">
                 No attendance data available.
               </p>
             )}
