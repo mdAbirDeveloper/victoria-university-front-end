@@ -25,78 +25,70 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const sessions = ["2020-2021","2021-2022","2022-2023","2023-2024","2024-2025","2025-2026"];
+  const sessions = [
+    "2020-2021","2021-2022","2022-2023","2023-2024",
+    "2024-2025","2025-2026"
+  ];
+
   const departments = [
-    "Computer Science and Engineering","Electrical and Electronic Engineering","Civil Engineering","Mechanical Engineering",
-    "Business Administration","Law","English","Economics","Accounting","Finance and Banking","Marketing",
-    "Sociology","Political Science","Pharmacy","Public Health","Mathematics"
+    "Computer Science and Engineering","Electrical and Electronic Engineering","Civil Engineering",
+    "Mechanical Engineering","Business Administration","Law","English","Economics",
+    "Accounting","Finance and Banking","Marketing","Sociology","Political Science",
+    "Pharmacy","Public Health","Mathematics"
   ];
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: "" });
+    const { name, value } = e.target;
+
+    // Prevent non-numeric input in roll field
+    if (name === "roll" && !/^\d*$/.test(value)) return;
+
+    setFormData({ ...formData, [name]: value });
+    setErrors({ ...errors, [name]: "" });
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  setLoading(true);
+    const newErrors = {};
 
-  try {
-    const res = await fetch("https://victoria-university-back-end.vercel.app/api/student/signup", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
-
-    if (res.ok) {
-      // If success, show success overlay
-      setSubmitted(true);
-      // setFormData({
-      //   name: "",
-      //   email: "",
-      //   phone: "",
-      //   fatherName: "",
-      //   motherName: "",
-      //   fatherPhone: "",
-      //   motherPhone: "",
-      //   session: "",
-      //   department: "",
-      //   roll: "",
-      //   address: "",
-      //   password: "",
-      // });
-    } else {
-      const errorData = await res.json();
-      alert(errorData.message || "Failed to register. Please try again.");
+    // Roll number validation — must be exactly 13 digits
+    if (!/^\d{13}$/.test(formData.roll)) {
+      newErrors.roll = "Roll number must be exactly 13 digits.";
     }
-  } catch (error) {
-    console.error("Signup error:", error);
-    alert("Something went wrong. Please try again later.");
-  } finally {
-    setLoading(false);
-  }
-};
 
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const res = await fetch("https://victoria-university-back-end.vercel.app/api/student/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (res.ok) {
+        setSubmitted(true);
+      } else {
+        const errorData = await res.json();
+        alert(errorData.message || "Failed to register. Please try again.");
+      }
+    } catch (error) {
+      console.error("Signup error:", error);
+      alert("Something went wrong. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-900 via-purple-800 to-indigo-900 text-white relative overflow-hidden">
-
-      {/* Animated Background Circles */}
-      {/* <motion.div
-        className="absolute w-96 h-96 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"
-        initial={{ x: -200, y: -100 }}
-        animate={{ x: 200, y: 200 }}
-        transition={{ repeat: Infinity, duration: 8, ease: "easeInOut", repeatType: "mirror" }}
-      />
-      <motion.div
-        className="absolute w-96 h-96 bg-purple-600 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"
-        initial={{ x: 200, y: 100 }}
-        animate={{ x: -200, y: -200 }}
-        transition={{ repeat: Infinity, duration: 8, ease: "easeInOut", repeatType: "mirror" }}
-      /> */}
 
       {/* Signup Form */}
       <motion.div
@@ -136,8 +128,11 @@ const handleSubmit = async (e) => {
                 value={formData[field.name]}
                 onChange={handleChange}
                 required
+                maxLength={field.name === "roll" ? 13 : undefined}
                 className={`w-full p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 ${
-                  errors[field.name] ? "focus:ring-red-400 border border-red-400" : "focus:ring-yellow-400"
+                  errors[field.name]
+                    ? "focus:ring-red-400 border border-red-400"
+                    : "focus:ring-yellow-400"
                 }`}
                 placeholder={field.label}
               />
@@ -157,7 +152,9 @@ const handleSubmit = async (e) => {
               onChange={handleChange}
               required
               className={`w-full p-3 rounded-lg bg-white/20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 ${
-                errors.password ? "focus:ring-red-400 border border-red-400" : "focus:ring-yellow-400"
+                errors.password
+                  ? "focus:ring-red-400 border border-red-400"
+                  : "focus:ring-yellow-400"
               }`}
               placeholder="Password"
             />
@@ -168,7 +165,9 @@ const handleSubmit = async (e) => {
             >
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
-            {errors.password && <p className="text-red-400 text-xs mt-1">{errors.password}</p>}
+            {errors.password && (
+              <p className="text-red-400 text-xs mt-1">{errors.password}</p>
+            )}
           </div>
 
           {/* Session */}
@@ -182,7 +181,11 @@ const handleSubmit = async (e) => {
               className="w-full p-3 rounded-lg bg-white/20 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
             >
               <option value="">Select Session</option>
-              {sessions.map((s, i) => <option key={i} className="bg-gray-600" value={s}>{s}</option>)}
+              {sessions.map((s, i) => (
+                <option key={i} className="bg-gray-600" value={s}>
+                  {s}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -197,7 +200,11 @@ const handleSubmit = async (e) => {
               className="w-full p-3 rounded-lg bg-white/20 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
             >
               <option value="">Select Department</option>
-              {departments.map((d, i) => <option key={i} className="bg-gray-600" value={d}>{d}</option>)}
+              {departments.map((d, i) => (
+                <option key={i} className="bg-gray-600" value={d}>
+                  {d}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -209,20 +216,26 @@ const handleSubmit = async (e) => {
             className="mt-8 flex items-center justify-center gap-2 text-gray-200 text-sm md:col-span-2"
           >
             <p>Already have an account?</p>
-            <Link href="/components/student/login" className="inline-flex items-center gap-1 text-yellow-400 font-medium hover:text-yellow-300 transition-colors duration-300">
+            <Link
+              href="/components/student/login"
+              className="inline-flex items-center gap-1 text-yellow-400 font-medium hover:text-yellow-300 transition-colors duration-300"
+            >
               <span>Login</span>
               <FaArrowRight className="text-xs mt-px" />
             </Link>
           </motion.div>
 
-          {/* Teachers signup link link */}
+          {/* Teachers signup link */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
             className="mt-2 flex items-center justify-center gap-2 text-gray-200 text-sm md:col-span-2"
           >
-            <Link href="/components/teacher/signup" className="inline-flex items-center gap-1 text-yellow-400 font-medium hover:text-yellow-300 transition-colors duration-300">
+            <Link
+              href="/components/teacher/signup"
+              className="inline-flex items-center gap-1 text-yellow-400 font-medium hover:text-yellow-300 transition-colors duration-300"
+            >
               <span>Teacher Signup</span>
               <FaArrowRight className="text-xs mt-px" />
             </Link>
@@ -265,7 +278,6 @@ const handleSubmit = async (e) => {
           </motion.div>
         </div>
       )}
-
     </div>
   );
 };
