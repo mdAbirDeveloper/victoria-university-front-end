@@ -16,6 +16,7 @@ const AllStudent = () => {
   const [searchRoll, setSearchRoll] = useState("");
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
+  const [showAll, setShowAll] = useState(false);
 
   // ✅ Restore previous page state (filter, data, scroll)
   useEffect(() => {
@@ -159,6 +160,9 @@ const AllStudent = () => {
 
   const filteredPending = filterByRoll(students);
   const filteredApproved = filterByRoll(approved);
+  const visibleStudents = showAll
+    ? filteredApproved
+    : filteredApproved.slice(0, 6);
 
   return (
     <div className="min-h-screen bg-linear-to-br from-green-800 via-teal-700 to-blue-700 text-white">
@@ -206,7 +210,6 @@ const AllStudent = () => {
           </div>
         </div>
 
-        
         {/* Search */}
         {(students.length > 0 || approved.length > 0) && (
           <div className="text-center mb-6">
@@ -246,11 +249,16 @@ const AllStudent = () => {
             </div>
           )}
 
-
         {/* Approved Students */}
         {filteredApproved.length > 0 && (
           <div className="bg-white/10 backdrop-blur-md p-5 rounded-2xl shadow-lg overflow-x-auto mb-4">
-            <h2 className="text-xl font-semibold mb-4">Approved Students</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold">Approved Students</h2>
+              <span className="text-sm bg-white/20 px-3 py-1 rounded-lg">
+                Total: {filteredApproved.length}
+              </span>
+            </div>
+
             <table className="w-full min-w-[600px] text-white border-separate border-spacing-0">
               <thead className="bg-white/20">
                 <tr>
@@ -260,7 +268,7 @@ const AllStudent = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredApproved.map((student) => (
+                {visibleStudents.map((student) => (
                   <tr
                     key={student._id}
                     className="odd:bg-white/5 even:bg-white/10"
@@ -300,6 +308,18 @@ const AllStudent = () => {
                 ))}
               </tbody>
             </table>
+
+            {/* Show More / Show Less */}
+            {filteredApproved.length > 6 && (
+              <div className="text-center mt-4">
+                <button
+                  onClick={() => setShowAll(!showAll)}
+                  className="bg-indigo-500 hover:bg-indigo-600 px-5 py-2 rounded-lg transition"
+                >
+                  {showAll ? "See Less" : "See More"}
+                </button>
+              </div>
+            )}
           </div>
         )}
 

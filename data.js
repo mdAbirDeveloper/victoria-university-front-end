@@ -95,10 +95,13 @@ export const departmentSubjects = {
     "Sociology of Education",
   ],
   "Political Science": [
-    "Political Theory",
-    "Public Administration",
-    "Comparative Politics",
-    "International Relations",
+    "Pol. Ins. and Organizations",
+    "Political Thoughts",
+    "Intro. to Public Administration",
+    "History of Bangladesh",
+    "ICT",
+    "Lav: ICT",
+    "Introducing Sociology",
   ],
   "Pharmacy": [
     "Pharmacology",
