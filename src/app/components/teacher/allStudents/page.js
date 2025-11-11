@@ -158,11 +158,19 @@ const AllStudent = () => {
     );
   };
 
+  // ✅ Filtered lists
   const filteredPending = filterByRoll(students);
   const filteredApproved = filterByRoll(approved);
-  const visibleStudents = showAll
-    ? filteredApproved
-    : filteredApproved.slice(0, 6);
+
+  // ✅ Sort approved students by last 3 digits of roll (ascending)
+  const sortedApproved = [...filteredApproved].sort((a, b) => {
+    const aLast3 = parseInt(a.roll.slice(-3)) || 0;
+    const bLast3 = parseInt(b.roll.slice(-3)) || 0;
+    return aLast3 - bLast3;
+  });
+
+  // ✅ Limit visible students
+  const visibleStudents = showAll ? sortedApproved : sortedApproved.slice(0, 6);
 
   return (
     <div className="min-h-screen bg-linear-to-br from-green-800 via-teal-700 to-blue-700 text-white">
@@ -250,12 +258,12 @@ const AllStudent = () => {
           )}
 
         {/* Approved Students */}
-        {filteredApproved.length > 0 && (
+        {sortedApproved.length > 0 && (
           <div className="bg-white/10 backdrop-blur-md p-5 rounded-2xl shadow-lg overflow-x-auto mb-4">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold">Approved Students</h2>
               <span className="text-sm bg-white/20 px-3 py-1 rounded-lg">
-                Total: {filteredApproved.length}
+                Total: {sortedApproved.length}
               </span>
             </div>
 
@@ -310,7 +318,7 @@ const AllStudent = () => {
             </table>
 
             {/* Show More / Show Less */}
-            {filteredApproved.length > 6 && (
+            {sortedApproved.length > 6 && (
               <div className="text-center mt-4">
                 <button
                   onClick={() => setShowAll(!showAll)}

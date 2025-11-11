@@ -170,7 +170,13 @@ const StudentDetails = () => {
               <strong>Father:</strong> {student.fatherName}
             </p>
             <p>
+              <strong>{"Father's Phone"}:</strong> {student.fatherPhone}
+            </p>
+            <p>
               <strong>Mother:</strong> {student.motherName}
+            </p>
+            <p>
+              <strong>{"Mother's Phone"}:</strong> {student.motherPhone}
             </p>
             <p>
               <strong>Address:</strong> {student.address}
