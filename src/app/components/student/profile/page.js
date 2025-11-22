@@ -8,19 +8,11 @@ import {
   FaEyeSlash,
   FaPhoneAlt,
   FaEnvelope,
-  FaIdCard,
   FaCamera,
   FaTimes,
 } from "react-icons/fa";
 import StudentNavbar from "../navber/page";
 import { useRouter } from "next/navigation";
-
-// Redesigned, cleaner StudentProfile component
-// - Better responsive layout
-// - Clearer upload flow with previews and progress states
-// - Accessibility improvements (aria labels, headings)
-// - Uses NEXT_PUBLIC_IMGBB_KEY if available, otherwise warns but keeps offline preview
-// - Keeps localStorage sync and optimistic UI
 
 export default function StudentProfile() {
   const router = useRouter();
@@ -178,6 +170,11 @@ export default function StudentProfile() {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+    // Block saving while image upload is in progress
+    if (uploadingImage) {
+      alert("Please wait until the image upload completes.");
+      return;
+    }
     setLoading(true);
     try {
       // If user has a selectedFile (upload still in progress or earlier failed),
@@ -226,11 +223,14 @@ export default function StudentProfile() {
       localStorage.setItem("studentData", JSON.stringify(optimistic));
       setStudent(optimistic);
 
-      const res = await fetch("https://victoria-university-back-end.vercel.app/api/student/update", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
+      const res = await fetch(
+        "https://victoria-university-back-end.vercel.app/api/student/update",
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        }
+      );
 
       const data = await res.json();
       if (!res.ok) {
@@ -519,10 +519,23 @@ export default function StudentProfile() {
                 <div className="mt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                   <button
                     type="submit"
-                    disabled={loading}
-                    className="inline-flex items-center gap-2 bg-yellow-400 text-slate-900 px-4 py-2 rounded-md font-semibold shadow w-full sm:w-auto justify-center"
+                    disabled={loading || uploadingImage}
+                    className={`inline-flex items-center gap-2 bg-yellow-400 text-slate-900 px-4 py-2 rounded-md font-semibold shadow w-full sm:w-auto justify-center
+                    ${
+                      loading || uploadingImage
+                        ? "opacity-60 cursor-not-allowed"
+                        : "hover:scale-[1.02] transition-transform"
+                    }`}
+                    aria-disabled={loading || uploadingImage}
+                    title={
+                      uploadingImage ? "Please wait — image is uploading" : ""
+                    }
                   >
-                    {loading ? "Saving..." : "Save changes"}
+                    {uploadingImage
+                      ? "Uploading image..."
+                      : loading
+                      ? "Saving..."
+                      : "Save changes"}
                   </button>
 
                   <button
